@@ -37,14 +37,26 @@ import concurrent.futures
 
 ## code for cleaning World Bank datasets (Andy)
 
+Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
+
 ```{python}
+### WB import
 os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
-dfwb = pd.read_csv('ACLED_2017-2024-Q1-QTA.csv')
+#    #juan wd
+#    #will wd
+
+dfwb = pd.read_csv('world_bank_development_indicators.csv')
 ```
 
 
 ## code for cleaning ACLED (Juan)
 
 ```{python}
+### ACLED import
+os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
+#    #juan wd
+#    #will wd
 
+### remember to import the CSV file and not the EXCEL (EXCEL formatting is wierd and buggy)
+dfac = pd.read_csv('ACLED_2017-2024-Q1-QTA.csv')
 ```
