@@ -33,30 +33,85 @@ import requests
 from bs4 import BeautifulSoup
 import concurrent.futures
 
+### SETTING WD
+os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
+# os.chdir("C:\Users\jmull\Downloads\ACLED_2017-2024-Q1-QTA.csv")  #juan wd
+# os.chdir("")   #will wd
+
 ```
-
-## code for cleaning World Bank datasets (Andy)
-
 Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
 
-```{python}
-### WB import
-os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
-#    #juan wd
-#    #will wd
+## code for cleaning World Bank Development Indicator (Andy)
 
-dfwb = pd.read_csv('world_bank_development_indicators.csv')
+```{python}
+wbcm = pd.read_csv('central_america_data_combined.csv', header=None)
+
+# remove empty space, set header, remove years before 2000, and empty variables
+wbcm = wbcm.iloc[4:]
+wbcm.columns = wbcm.iloc[0]
+wbcm = wbcm[1:].reset_index(drop=True)
+wbcm = wbcm.drop(wbcm.columns[4:44], axis=1)
+wbcm = wbcm.dropna()
+#wbcm = wbcm.loc[~wbcm.iloc[:, 4:].isna().all(axis=1)] # only drops columns that are fully empty--basically a less harsh dropna
+
+# melting
+wbcm_melt = wbcm.melt(id_vars=['Country Name','Country Code','Indicator Name','Indicator Code'], var_name='Year', value_name='Value')
+wbcm_melt = wbcm_melt.drop('Indicator Code', axis=1)
+
+# pivot
+wbcm_pv = wbcm_melt.pivot_table(index=['Country Name', 'Year'], columns='Indicator Name', values='Value', aggfunc='first').reset_index()
+
+# save cleaned
+wbcm_pv.to_csv("central_america_data_cleaned.csv", index=False)
 ```
 
+wbcm_columns = ['Population growth (annual %)', 'Intentional homicides, female (per 100,000 female)', 'Merchandise imports by the reporting economy (current US$)','Commercial service imports (current US$)', etc...]
+
+variables we are considering are the categroies surrounding: 
+employment, debt, tax, expenditures (education, public services, infrastructure, health), life exp. birth and death rates.
+
+## code for cleaning World Bank Development Inidcators (Kaggle) (Andy)
+
+```{python}
+wbdi = pd.read_csv('world_bank_development_indicators.csv')
+
+# subset to central american countries, and post 2000
+countries_list = ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama']
+wbdi_CA = wbdi[wbdi['country'].isin(countries_list)]
+
+wbdi_CA['date'] = pd.to_datetime(wbdi_CA['date'])
+wbdi_CA = wbdi_CA[wbdi_CA['date'] > '2000-01-01']
+
+# save cleaned
+wbdi_CA.to_csv("world_bank_development_indicators_cleaned.csv", index=False)
+```
 
 ## code for cleaning ACLED (Juan)
 
 ```{python}
-### ACLED import
-os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
-#    #juan wd
-#    #will wd
+### ACLED import (simplified so only 1 line is needed to be changed)
 
-### remember to import the CSV file and not the EXCEL (EXCEL formatting is wierd and buggy)
-dfac = pd.read_csv('ACLED_2017-2024-Q1-QTA.csv')
+
+acled = pd.read_csv('ACLED_2017-2024-Q1-QTA.csv')
+
+# Subset by Central American countries
+acled_CA = acled[acled["region"] == "Central America"]
+
+# Subset by relevant variables
+acled_columns = ["event_id_cnty", "event_date", "event_type", 
+           "sub_event_type", "actor1", "actor2", 
+           "inter1", "inter2", "interaction", 
+           "country", "admin1", "latitude", 
+           "longitude", "geo_precision", "notes"]
+
+# Create a new csv
+acled_CA.to_csv('acled_project_data.csv', index=False)
 ```
+
+Countries: 
+(['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras',
+       'Mexico', 'Nicaragua', 'Panama'], dtype=object)
+
+
+
+       I have a column for country, name, and code, and each year is a separate column, each variable is a . I want to groupby such that there is a year column, a name column, a code column, a country column
