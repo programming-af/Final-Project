@@ -105,7 +105,7 @@ acled_columns = ["event_id_cnty", "event_date", "event_type",
            "longitude", "geo_precision", "notes"]
 
 # Create a new csv
-acled_CA.to_csv('acled_project_data.csv', index=False)
+acled_CA.to_csv('acled_project_data_cleaned.csv', index=False)
 ```
 
 Countries: 
