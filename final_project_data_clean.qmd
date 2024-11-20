@@ -41,7 +41,10 @@ os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\D
 ```
 Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
 
-## code for cleaning World Bank Development Indicator (Andy)
+
+
+
+## code for cleaning World Bank Development Indicator (central america) (Andy)
 
 ```{python}
 wbcm = pd.read_csv('central_america_data_combined.csv', header=None, skiprows=4)
@@ -61,7 +64,17 @@ wbcm_melt = wbcm_melt.drop('Indicator Code', axis=1)
 
 # pivot
 wbcm_pv = wbcm_melt.pivot_table(index=['Country Name', 'Year'], columns='Indicator Name', values='Value', aggfunc='first').reset_index()
-# save cleaned
+
+```
+
+reducing wbdi columns
+```{python}
+# remove na (if column has more than 20% values missing then drop)
+
+```
+
+```{python}
+# export
 wbcm_pv.to_csv("central_america_data_cleaned.csv", index=False)
 ```
 
@@ -69,6 +82,9 @@ wbcm_columns = ['Population growth (annual %)', 'Intentional homicides, female (
 
 variables we are considering are the categroies surrounding: 
 employment, debt, tax, expenditures (education, public services, infrastructure, health), life exp. birth and death rates.
+
+
+
 
 ## code for cleaning World Bank Development Inidcators (Kaggle) (Andy)
 
@@ -82,9 +98,20 @@ wbdi_CA = wbdi[wbdi['country'].isin(countries_list)]
 wbdi_CA['date'] = pd.to_datetime(wbdi_CA['date'])
 wbdi_CA = wbdi_CA[wbdi_CA['date'] > '2000-01-01']
 
-# save cleaned
+```
+
+reducing wbdi columns
+```{python}
+# remove na (if column has more than 20% values missing then drop)
+
+```
+
+```{python}
+# export
 wbdi_CA.to_csv("world_bank_development_indicators_cleaned.csv", index=False)
 ```
+
+
 
 
 ## code for cleaning ACLED (Juan)
@@ -105,8 +132,30 @@ acled_columns = ["event_id_cnty", "event_date", "event_type",
            "country", "admin1", "latitude", 
            "longitude", "geo_precision", "notes"]
 
-# Create a new csv
+```
+
+reducing acled columns
+```{python}
+# remove na (if column has more than 20% values missing then drop)
+acled_CA = acled_CA.loc[:, acled_CA.isnull().mean() <= 0.2]
+
+# examine remaining
+acled_col = acled_CA.columns.to_list()
+acled_col = pd.DataFrame(acled_col)
+```
+
+```{python}
+# export
 acled_CA.to_csv('acled_project_data_cleaned.csv', index=False)
+```
+
+
+
+
+## Creating a merged dataset
+
+```{python}
+
 ```
 
 Countries: 
