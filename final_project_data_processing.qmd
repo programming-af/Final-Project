@@ -1,0 +1,352 @@
+---
+title: "Final Project Data Processing"
+format: 
+  pdf:
+    keep-tex: true
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+include-before-body:
+  text: |
+    \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+      showspaces = false,
+      showtabs = false,
+      breaksymbolleft={},
+      breaklines
+    }
+---
+
+
+```{python}
+### SETUP 
+import pandas as pd
+import altair as alt
+import time
+import os
+import warnings
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+warnings.filterwarnings('ignore')
+import requests
+from bs4 import BeautifulSoup
+import concurrent.futures
+
+### SETTING WD
+os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
+#os.chdir("C:\Users\jmull\Downloads\ACLED_2017-2024-Q1-QTA.csv")  #juan wd
+#os.chdir("/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final")   #will wd
+
+```
+Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
+
+loading the data created from 'final_project_data_clean'
+```{python}
+### LOAD DATA
+wbcm_pv = pd.read_csv('central_america_data_cleaned.csv') # world bank dataset from kaggle
+wbdi_CA = pd.read_csv('world_bank_development_indicators_cleaned.csv') # world bank dataset from world bank
+acled_CA = pd.read_csv('acled_project_data_cleaned.csv') # ACLED
+```
+
+## Will Code: Inital Visualizations and merging. 
+## First, Lets look at the columns and how many NAs are in each df
+
+```{python}
+print(wbdi_CA.columns)
+print(wbdi_CA.isnull().sum()) # Check for missing values
+```
+
+```{python}
+print(wbcm_pv.columns)
+print(wbcm_pv.isnull().sum())
+```
+
+```{python}
+print(acled_CA.columns)
+print(acled_CA.isnull().sum())
+```
+
+## Now Lets do some summary statistics by each country for EDA, before we merge them
+
+```{python}
+#Rename Columns for merges and such
+wbdi_CA.rename(columns={'country': 'Country', 'date': 'Year'}, inplace=True)
+wbcm_pv.rename(columns={'Country': 'Country', 'Year': 'Year'}, inplace=True)
+acled_CA.rename(columns={'country': 'Country', 'year': 'Year'}, inplace=True)
+```
+
+```{python}
+# cleaning dtypes
+acled_CA['Year'] = pd.to_numeric(acled_CA['Year'], errors='coerce', downcast='integer')
+print(acled_CA['Year'].head())
+```
+
+```{python}
+# make non datetime dates to datetime
+acled_CA['Year'] = pd.to_datetime(acled_CA['event_date'], errors='coerce').dt.year
+wbdi_CA['Year'] = pd.to_datetime(wbdi_CA['Year'], errors='coerce')
+```
+
+
+## Now Lets do some summary statistics by each country for EDA, before we merge them
+
+```{python}
+# Basic statistics by country
+wbdi_summary = wbdi_CA.groupby('Country').mean()
+print(wbdi_summary)
+
+# Identify indicators with the most missing values
+nonmissing_wbdi = wbdi_CA.isnull().sum().sort_values(ascending=True)
+print("Top indicators in WBDI:\n", nonmissing_wbdi.head(10))
+```
+
+## Looking at Political Stability Overtime
+```{python}
+## Political Stability
+alt.Chart(wbdi_CA).mark_line().encode(
+    x=alt.X('Year:T', title='Year'),
+    y=alt.Y('political_stability_estimate', title='Political Stability by Year'),
+    color='Country:N',
+    tooltip=['Country', 'Year', 'political_stability_estimate']
+).properties(
+    title='Political Stability Country'
+)
+
+```
+
+*not including mexico because country too large and diverse and different from other central american countries
+
+```{python}
+# Filter out Mexico
+filtered_data = wbdi_CA[wbdi_CA['Country'] != 'Mexico']
+
+# Plot GDP per Capita Over Time without Mexico
+alt.Chart(filtered_data).mark_line().encode(
+    x=alt.X('Year:T', title='Year'),
+    y=alt.Y('GDP_current_US:Q', title='GDP (Current US$)'),
+    color='Country:N',
+    tooltip=['Country', 'Year', 'GDP_current_US']
+)
+```
+
+
+```{python}
+#Homicide Rates
+alt.Chart(wbdi_CA).mark_line().encode(
+    x=alt.X('Year:T', title='Year'),
+    y=alt.Y('intentional_homicides:Q', title='Homicide Rate (Total)'),
+    color='Country:N',
+    tooltip=['Country', 'Year', 'intentional_homicides']
+)
+
+#Notice Large Drop in Homicide Rates in El Salvador
+```
+
+
+## Make a Corr Plot of development Indicators
+```{python}
+# Select a subset of indicators
+selected_indicators = wbdi_CA[[
+    'GDP_current_US',
+    'population',
+    'life_expectancy_at_birth',
+    'access_to_electricity%',
+    'inflation_annual%',
+    'gini_index',
+    'human_capital_index',
+    'intentional_homicides'
+]]
+
+# Drop rows with missing values
+selected_indicators = selected_indicators.dropna()
+
+# Compute the correlation matrix
+corr_matrix = selected_indicators.corr()
+
+# Reset index for Altair
+corr_matrix = corr_matrix.reset_index().melt('index')
+
+# Create the correlation heatmap
+corr_heatmap = alt.Chart(corr_matrix).mark_rect().encode(
+    x=alt.X('index:N', title='Indicator'),
+    y=alt.Y('variable:N', title='Indicator'),
+    color=alt.Color('value:Q', scale=alt.Scale(scheme='redblue', domain=(-1, 1))),
+    tooltip=['index:N', 'variable:N', 'value:Q']
+).properties(
+    title='Correlation Matrix of Development Indicators',
+    width=400,
+    height=400
+)
+
+corr_heatmap.display()
+```
+
+
+```{python}
+import folium
+from folium.plugins import MarkerCluster
+from shapely.geometry import Point
+
+# Ensure latitude and longitude column names are correct
+latitude_column = 'latitude'
+longitude_column = 'longitude'
+
+# Create geometry for the GeoDataFrame
+geometry = [Point(xy) for xy in zip(acled_CA[longitude_column], acled_CA[latitude_column])]
+acled_gdf = gpd.GeoDataFrame(acled_CA, geometry=geometry, crs='EPSG:4326')
+```
+
+```{python}
+#shapefile_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp'    # will wd
+#shapefile_path = "d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp"    # andy wd
+
+latin_america = gpd.read_file(shapefile_path)
+countries_in_data = acled_CA['Country'].unique()
+latin_america = latin_america[latin_america['ADMIN'].isin(countries_in_data)]
+latin_america = latin_america.to_crs(epsg=3857)
+
+event_types = acled_gdf['event_type'].unique()
+num_event_types = len(event_types)
+```
+
+
+## Interactive Maps of Violence by Year (DO NOT RUN)
+```
+#def create_interactive_map(acled_data, shapefile, year):
+    # Filter data for the specific year
+    #yearly_data = acled_data[acled_data['Year'] == year]
+    
+    # Initialize the map centered around Latin America
+    m = folium.Map(location=[0, -70], zoom_start=3, tiles='OpenStreetMap')
+    
+    # Add country boundaries
+    folium.GeoJson(
+        shapefile.to_crs(epsg=4326),
+        style_function=lambda x: {'fillColor': 'white', 'color': 'black', 'weight': 1, 'fillOpacity': 0.1}
+    ).add_to(m)
+    
+    # Create a marker cluster
+    marker_cluster = MarkerCluster().add_to(m)
+    
+    # Loop through the data and add markers
+    for idx, row in yearly_data.iterrows():
+        # Prepare the tooltip content
+        tooltip_content = (
+            f"<b>Event Type:</b> {row['event_type']}<br>"
+            f"<b>Date:</b> {row['event_date']}<br>"
+            f"<b>Location:</b> {row.get('admin1', 'N/A')}, {row['Country']}<br>"
+            f"<b>Notes:</b> {row.get('notes', 'N/A')}"
+        )
+        
+        # Determine marker color based on event type
+        if row['event_type'] == 'Violence against civilians':
+            marker_color = 'red'
+        elif row['event_type'] == 'Protests':
+            marker_color = 'blue'
+        elif row['event_type'] == 'Riots':
+            marker_color = 'purple'
+        else:
+            marker_color = 'green'
+        
+        # Add marker to the cluster
+        folium.Marker(
+            location=[row['latitude'], row['longitude']],
+            tooltip=tooltip_content,
+            icon=folium.Icon(color=marker_color, icon='info-sign')
+        ).add_to(marker_cluster)
+    
+    # Save the map to an HTML file
+    map_filename = f'violent_events_map_{year}.html'
+    m.save(map_filename)
+    print(f"Interactive map for {year} saved as {map_filename}.")
+
+# Create interactive maps for each year
+years = sorted(acled_CA['Year'].unique())
+for year in years:
+   # create_interactive_map(acled_CA, latin_america, year)
+```
+
+
+## Merge ACLED and WBDI(central america)
+
+```{python}
+acled_CA['Year'] = acled_CA['Year'].astype(int)
+wbdi_CA['Year'] = wbdi_CA['Year'].dt.year
+wbdi_CA['Year'] = wbdi_CA['Year'].astype(int)
+
+el_salvador_violence = acled_CA[acled_CA['Country'] == 'El Salvador']
+el_salvador_gdp = wbdi_CA[wbdi_CA['Country'] == 'El Salvador']
+
+# Group violence data by year
+violence_per_year = el_salvador_violence.groupby('Year').size().reset_index(name='Violent Events')
+
+# Group GDP data by year
+avg_gdp_per_year = el_salvador_gdp.groupby('Year')['GDP_current_US'].mean().reset_index(name='Average GDP')
+
+# Merge on Year
+violence_gdp_time = pd.merge(violence_per_year, avg_gdp_per_year, on='Year')
+
+# Verify merged data
+print(violence_gdp_time.head())
+```
+
+```{python}
+# Plotting
+fig, ax1 = plt.subplots(figsize=(10, 6))
+
+color = 'tab:red'
+ax1.set_xlabel('Year')
+ax1.set_ylabel('Violent Events', color=color)
+ax1.plot(violence_gdp_time['Year'], violence_gdp_time['Violent Events'], color=color)
+ax1.tick_params(axis='y', labelcolor=color)
+
+ax2 = ax1.twinx()  # Instantiate a second axes that shares the same x-axis
+
+color = 'tab:blue'
+ax2.set_ylabel('Average GDP (US$)', color=color)
+ax2.plot(violence_gdp_time['Year'], violence_gdp_time['Average GDP'], color=color)
+ax2.tick_params(axis='y', labelcolor=color)
+
+plt.title('Violent Events and Average GDP Over Time')
+fig.tight_layout()
+plt.show()
+```
+
+## Looking at El Salvador
+
+```{python}
+print(wbdi_CA['Year'].head(10))
+print(wbdi_CA['Year'].dtype)
+```
+
+## Plotting 
+```{python}
+# Altair plot for Violent Events and Average GDP
+base = alt.Chart(violence_gdp_time).encode(
+    x=alt.X('Year:O', title='Year')  # Treating Year as ordinal for cleaner spacing
+)
+
+# Line chart for Violent Events
+line_violence = base.mark_line(color='red').encode(
+    y=alt.Y('Violent Events:Q', title='Violent Events'),
+    tooltip=['Year', 'Violent Events']
+)
+
+# Line chart for Average GDP
+line_gdp = base.mark_line(color='blue').encode(
+    y=alt.Y('Average GDP:Q', title='Average GDP (US$)', axis=alt.Axis(grid=False)),
+    tooltip=['Year', 'Average GDP']
+)
+
+# Combine the two charts
+el_salv_chart = alt.layer(line_violence, line_gdp).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and Average GDP in El Salvador Over Time',
+    width=600,
+    height=400
+)
+
+el_salv_chart
+```
