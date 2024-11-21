@@ -1,0 +1,208 @@
+This is a new Quarto Markdown file for EDA on Larger Data Set
+
+
+```{python}
+import pandas as pd
+import altair as alt
+
+CA_ACLED = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/acled_project_data_cleaned.csv')
+```
+
+
+```{python}
+required_columns = ['year', 'event_type', 'location']
+if not all(col in CA_ACLED.columns for col in required_columns):
+    raise ValueError(f"The dataset must include the columns: {', '.join(required_columns)}")
+
+```
+
+
+```{python}
+CA_ACLED['year'] = CA_ACLED['year'].astype(int)
+CA_ACLED.dropna(subset=['event_type'], inplace=True)
+
+# Aggregate data to get total crimes per year per country
+aggregated_data = (
+    CA_ACLED.groupby(['country', 'year'])
+    .size()
+    .reset_index(name='total_crimes')
+)
+
+# Create the bar chart
+bar_chart = alt.Chart(aggregated_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('total_crimes:Q', title='Total Crimes'),
+    color=alt.Color('country:N', title='Country'),
+    tooltip=['country', 'year', 'total_crimes']
+).properties(
+    title="Total Crimes Per Year Per Country",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart.show()
+```
+
+## First Visualization
+```{python}
+# Create the line chart
+line_chart = alt.Chart(aggregated_data).mark_line(point=True).encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('total_crimes:Q', title='Total Crimes'),
+    color=alt.Color('country:N', title='Country'),
+    tooltip=['country', 'year', 'total_crimes']
+).properties(
+    title="Total Crimes Per Year Per Country",
+    width=600,
+    height=400
+)
+
+# Display the chart
+line_chart.show()
+```
+
+
+```{python}
+# Filter data for El Salvador
+el_salvador_data = CA_ACLED[CA_ACLED['country'] == 'El Salvador']
+
+# Aggregate data to get total crimes per year by event type
+crime_type_data = (
+    el_salvador_data.groupby(['year', 'event_type'])
+    .size()
+    .reset_index(name='crime_count')
+)
+
+# Create the stacked bar chart
+stacked_bar_chart = alt.Chart(crime_type_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('crime_count:Q', title='Number of Crimes'),
+    color=alt.Color('event_type:N', title='Crime Type'),
+    tooltip=['year', 'event_type', 'crime_count']
+).properties(
+    title="Crimes Per Year by Type in El Salvador",
+    width=600,
+    height=400
+)
+
+# Display the chart
+stacked_bar_chart.show()
+```
+
+## Analyzing a different ACLED DataSet
+```{python}
+acled_2013 = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv')
+```
+
+
+```{python}
+missing_columns = [col for col in CA_ACLED.columns if col not in acled_2013.columns]
+
+print("Columns in df2 but not in df1:", missing_columns)
+```
+
+
+```{python}
+print(acled_2013.columns)
+
+print(CA_ACLED.columns)
+```
+
+
+```{python}
+el_salvador_data_2 = acled_2013[acled_2013['country'] == 'El Salvador']
+
+crime_event_type_subtype_data = (
+    el_salvador_data.groupby(['year', 'event_type', 'sub_event_type'])
+    .size()
+    .reset_index(name='count_event_count')
+)
+```
+
+```{python}
+# Create the bar chart
+bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_event_count:Q', title='Total Crimes'),
+    color=alt.Color('event_type', title='Crime Type'),
+    tooltip=['count_event_count', 'year', 'event_type']
+).properties(
+    title="Total Crimes in El Salvador: Per Year Per Type",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
+
+
+```{python}
+# Create the bar chart
+bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_event_count:Q', title='Total Crimes'),
+    color=alt.Color('sub_event_type', title='Crime Sub-Type'),
+    tooltip=['count_event_count', 'year', 'sub_event_type']
+).properties(
+    title="Total Crimes in El Salvador: Per Year Per Sub-Type",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
+
+
+```{python}
+pie_charts = []
+
+# Loop through each unique year and create a pie chart
+for year in crime_event_type_subtype_data['year'].unique():
+    year_data = crime_event_type_subtype_data[crime_event_type_subtype_data['year'] == year]
+    
+    pie_chart = alt.Chart(year_data).mark_arc().encode(
+        theta=alt.Theta(field="count_event_count", type="quantitative"),
+        color=alt.Color(field="sub_event_type", type="nominal", legend=alt.Legend(title="Sub Event Type")),
+        tooltip=[
+            alt.Tooltip("event_type:N", title="Event Type"),
+            alt.Tooltip("sub_event_type:N", title="Sub Event Type"),
+            alt.Tooltip("count_event_count:Q", title="Event Count")
+        ]
+    ).properties(
+        title=f"Crime Event Distribution in El Salvador ({year})"
+    )
+    
+    pie_charts.append(pie_chart)
+
+# Display all pie charts
+alt.vconcat(*pie_charts)
+```
+
+## Now Lets Look at Actors in El Salvador
+```{python}
+actors_df = (el_salvador_data_2.groupby(['year', 'actor1'])
+    .size()
+    .reset_index(name='count_actors')
+)
+```
+
+
+```{python}
+# Create the bar chart
+bar_chart_crime = alt.Chart(actors_df).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_actors:Q', title='Actor Count'),
+    color=alt.Color('actor1', title='actor'),
+    tooltip=['actor1', 'year', 'count_actors']
+).properties(
+    title="Actor Prevelance by Year",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
