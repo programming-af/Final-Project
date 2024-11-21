@@ -1,0 +1,366 @@
+This is a new Quarto Markdown file for EDA on Larger Data Set
+
+
+```{python}
+import pandas as pd
+import altair as alt
+
+CA_ACLED = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/acled_project_data_cleaned.csv')
+```
+
+
+```{python}
+required_columns = ['year', 'event_type', 'location']
+if not all(col in CA_ACLED.columns for col in required_columns):
+    raise ValueError(f"The dataset must include the columns: {', '.join(required_columns)}")
+
+```
+
+## Bar Chart for total Crimes per Year
+
+```{python}
+CA_ACLED['year'] = CA_ACLED['year'].astype(int)
+CA_ACLED.dropna(subset=['event_type'], inplace=True)
+CA_ACLED = CA_ACLED[CA_ACLED['country'] != 'Mexico']
+# Aggregate data to get total crimes per year per country
+aggregated_data = (
+    CA_ACLED.groupby(['country', 'year'])
+    .size()
+    .reset_index(name='total_crimes')
+)
+
+
+bar_chart = alt.Chart(aggregated_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('total_crimes:Q', title='Total Crimes'),
+    color=alt.Color('country:N', title='Country'),
+    tooltip=['country', 'year', 'total_crimes']
+).properties(
+    title="Total Crimes Per Year Per Country",
+    width=600,
+    height=400
+)
+
+bar_chart.show()
+```
+
+## Line Chart for Crimes
+```{python}
+# Create the line chart
+line_chart = alt.Chart(aggregated_data).mark_line(point=True).encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('total_crimes:Q', title='Total Crimes'),
+    color=alt.Color('country:N', title='Country'),
+    tooltip=['country', 'year', 'total_crimes']
+).properties(
+    title="Total Crimes Per Year Per Country",
+    width=600,
+    height=400
+)
+
+# Display the chart
+line_chart.show()
+```
+
+
+```{python}
+# Filter data for El Salvador
+el_salvador_data = CA_ACLED[CA_ACLED['country'] == 'El Salvador']
+
+# Aggregate data to get total crimes per year by event type
+crime_type_data = (
+    el_salvador_data.groupby(['year', 'event_type'])
+    .size()
+    .reset_index(name='crime_count')
+)
+
+# Create the stacked bar chart
+stacked_bar_chart = alt.Chart(crime_type_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('crime_count:Q', title='Number of Crimes'),
+    color=alt.Color('event_type:N', title='Crime Type'),
+    tooltip=['year', 'event_type', 'crime_count']
+).properties(
+    title="Crimes Per Year by Type in El Salvador",
+    width=600,
+    height=400
+)
+
+# Display the chart
+stacked_bar_chart.show()
+```
+
+## Analyzing a different ACLED DataSet
+```{python}
+acled_2013 = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv')
+```
+
+
+```{python}
+missing_columns = [col for col in CA_ACLED.columns if col not in acled_2013.columns]
+
+print("Columns in df2 but not in df1:", missing_columns)
+```
+
+
+```{python}
+print(acled_2013.columns)
+
+print(CA_ACLED.columns)
+```
+
+
+```{python}
+el_salvador_data_2 = acled_2013[acled_2013['country'] == 'El Salvador']
+
+crime_event_type_subtype_data = (
+    el_salvador_data.groupby(['year', 'event_type', 'sub_event_type'])
+    .size()
+    .reset_index(name='count_event_count')
+)
+```
+
+```{python}
+# Create the bar chart
+bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_event_count:Q', title='Total Crimes'),
+    color=alt.Color('event_type', title='Crime Type'),
+    tooltip=['count_event_count', 'year', 'event_type']
+).properties(
+    title="Total Crimes in El Salvador: Per Year Per Type",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
+
+
+```{python}
+# Create the bar chart
+bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_event_count:Q', title='Total Crimes'),
+    color=alt.Color('sub_event_type', title='Crime Sub-Type'),
+    tooltip=['count_event_count', 'year', 'sub_event_type']
+).properties(
+    title="Total Crimes in El Salvador: Per Year Per Sub-Type",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
+
+
+```{python}
+pie_charts = []
+
+# Loop through each unique year and create a pie chart
+for year in crime_event_type_subtype_data['year'].unique():
+    year_data = crime_event_type_subtype_data[crime_event_type_subtype_data['year'] == year]
+    
+    pie_chart = alt.Chart(year_data).mark_arc().encode(
+        theta=alt.Theta(field="count_event_count", type="quantitative"),
+        color=alt.Color(field="sub_event_type", type="nominal", legend=alt.Legend(title="Sub Event Type")),
+        tooltip=[
+            alt.Tooltip("event_type:N", title="Event Type"),
+            alt.Tooltip("sub_event_type:N", title="Sub Event Type"),
+            alt.Tooltip("count_event_count:Q", title="Event Count")
+        ]
+    ).properties(
+        title=f"Crime Event Distribution in El Salvador ({year})"
+    )
+    
+    pie_charts.append(pie_chart)
+
+# Display all pie charts
+alt.vconcat(*pie_charts)
+```
+
+## Now Lets Look at Actors in El Salvador
+```{python}
+actors_df = (el_salvador_data_2.groupby(['year', 'actor1'])
+    .size()
+    .reset_index(name='count_actors')
+)
+
+unique_actors = actors_df['actor1'].nunique()
+```
+
+```{python}
+print(f"Total unique actors: {unique_actors}")
+
+## Too many actors
+
+actor_counts = (
+    el_salvador_data_2.groupby('actor1')
+    .size()
+    .reset_index(name='total_count')
+    .sort_values(by='total_count', ascending=False)
+)
+
+## Lets filter out actors that appear less than 10 times through the years:
+
+threshold = 10 
+actor_counts['cleaned_actor1'] = actor_counts['actor1'].where(
+    actor_counts['total_count'] >= threshold, 'Other'
+)
+
+cleaned_actor_counts = (
+    actor_counts.groupby('cleaned_actor1')['total_count']
+    .sum()
+    .reset_index()
+    .sort_values(by='total_count', ascending=False)
+)
+
+print(cleaned_actor_counts)
+```
+
+
+## Lets Clean it up a little More
+
+```{python}
+actor_mapping = {
+    'Police Forces of El Salvador (2019-)': 'Police Forces of El Salvador',
+    'Police Forces of El Salvador (2009-2019)': 'Police Forces of El Salvador',
+    'Military Forces of El Salvador (2019-)': 'Military Forces of El Salvador',
+    'Military Forces of El Salvador (2009-2019)': 'Military Forces of El Salvador',
+    'B-18 (S): Barrio-18 (Surenos)': 'B-18: Barrio-18',
+    'B-18 (R): Barrio-18 (Revolucionarios)': 'B-18: Barrio-18',
+    'Unidentified Gang (El Salvador)': 'Unidentified Group (El Salvador)',
+    'Unidentified Armed Group (El Salvador)': 'Unidentified Group (El Salvador)'
+}
+
+# Apply the mapping to the `actor1` column
+actors_df['cleaned_actor1'] = actors_df['actor1'].replace(actor_mapping)
+
+# group by categories
+tidy_actor_counts = (
+    actors_df.groupby('cleaned_actor1')['count_actors']
+    .sum()
+    .reset_index()
+    .sort_values(by='count_actors', ascending=False)
+)
+
+# Display the tidy result
+print(f"Total unique actors after cleaning: {tidy_actor_counts['cleaned_actor1'].nunique()}")
+print(tidy_actor_counts)
+```
+
+## applying it to the main dataset of el salvador to track actors year by year
+```{python}
+el_salvador_data_2['cleaned_actor1'] = el_salvador_data_2['actor1'].replace(actor_mapping)
+
+# Group by year and cleaned actor categories, then count occurrences
+yearly_actor_counts = (
+    el_salvador_data_2.groupby(['year', 'cleaned_actor1'])
+    .size()
+    .reset_index(name='count_actors')
+)
+
+```
+
+
+```{python}
+bar_chart_crime = alt.Chart(yearly_actor_counts).mark_bar().encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('count_actors:Q', title='Actor Count'),
+    color=alt.Color('cleaned_actor1', title='Actor'),
+    tooltip=['cleaned_actor1', 'year', 'count_actors']
+).transform_filter(
+    alt.datum.count_actors > 20  # Filter for actors with count > 20
+).properties(
+    title="Actor Prevalence by Year (Count > 20)",
+    width=600,
+    height=400
+)
+
+# Display the chart
+bar_chart_crime.show()
+```
+
+
+
+### Now lets load the other datsets and do some dimension reduction
+```{python}
+import os
+
+os.chdir('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Clean Data ')
+
+wbdi = pd.read_csv('world_bank_development_indicators_cleaned.csv')
+
+wbpv = pd.read_csv('central_america_data_cleaned.csv')
+```
+
+
+```{python}
+# Display the structure of the datasets
+print("World Bank Development Indicators:")
+print(wbdi.info())
+print("\nCentral America Data:")
+print(wbpv.info())
+
+# View column names and basic statistics
+print("World Bank Columns:", wbdi.columns)
+print("Central America Columns:", wbpv.columns)
+
+# Check for missing values
+print("Missing Values in WBDI:")
+print(wbdi.isnull().sum())
+print("\nMissing Values in WBPV:")
+print(wbpv.isnull().sum())
+```
+
+
+```{python}
+# Filter wbdi for relevant columns and drop columns with too many missing values
+wbdi_filtered = wbdi.dropna(thresh=len(wbdi) * 0.5, axis=1)
+wbdi_filtered = wbdi_filtered[
+    ['date', 'GDP_current_US', 'political_stability_estimate', 'rule_of_law_estimate',
+     'control_of_corruption_estimate', 'gini_index', 'life_expectancy_at_birth', 'population']
+]
+
+# Filter wbpv for El Salvador and drop unrelated columns
+wbpv_filtered = wbpv[wbpv['Country Name'] == 'El Salvador']
+wbpv_filtered = wbpv_filtered.drop(columns=['Country Name'], axis=1)
+
+# Make lower case
+wbdi_filtered.columns = wbdi_filtered.columns.str.lower()
+wbpv_filtered.columns = wbpv_filtered.columns.str.lower()
+el_salvador_data_2.columns = el_salvador_data_2.columns.str.lower()
+
+# Rename 'date' to 'year' in wbdi_filtered for merging
+wbdi_filtered = wbdi_filtered.rename(columns={'date': 'year'})
+```
+
+## Add medians for missing values
+```{python}
+# Convert the 'date' column to datetime
+wbdi_filtered['date'] = pd.to_datetime(wbdi_filtered['year'], errors='coerce')
+# Select only numeric columns for median imputation
+numeric_columns = wbdi_filtered.select_dtypes(include=['number']).columns
+
+# Fill missing values in numeric columns with their median
+wbdi_filtered[numeric_columns] = wbdi_filtered[numeric_columns].fillna(wbdi_filtered[numeric_columns].median())
+
+wbpv_filtered.fillna(wbpv_filtered.median(), inplace=True)
+```
+
+
+```{python}
+el_salvador_data_2['year'] = pd.to_numeric(el_salvador_data_2['year'], errors='coerce').astype('Int64')
+wbdi_filtered['year'] = pd.to_numeric(wbdi_filtered['year'], errors='coerce').astype('Int64')
+wbpv_filtered['year'] = pd.to_numeric(wbpv_filtered['year'], errors='coerce').astype('Int64')
+
+# Merge datasets on year
+el_salvador_data_combined = pd.merge(el_salvador_data_2, wbdi_filtered, on='year', how='left')
+el_salvador_data_combined = pd.merge(el_salvador_data_combined, wbpv_filtered, left_on='year', right_index=True, how='left')
+```
+
+```{python}
+print(el_salvador_data_combined.columns)
+```
