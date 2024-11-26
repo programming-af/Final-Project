@@ -41,6 +41,10 @@ os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\D
 ```
 Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
 
+ORIGINAL UNPROCESSED DATA:
+https://drive.google.com/drive/folders/1Mfv-cvmm9iIgnQ7UKKiMuoTJo0Vjpcv4?usp=sharing
+
+
 loading the data created from 'final_project_data_clean'
 
 LINK FOR DATA (uploaded in google drive):
