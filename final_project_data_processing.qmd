@@ -42,6 +42,10 @@ os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\D
 Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
 
 loading the data created from 'final_project_data_clean'
+
+LINK FOR DATA (uploaded in google drive):
+https://drive.google.com/drive/folders/1los_5JwF1rNVOaFtjH1B2Z8thgmBXHxC?usp=drive_link
+
 ```{python}
 ### LOAD DATA
 wbcm_pv = pd.read_csv('central_america_data_cleaned.csv') # world bank dataset from kaggle
