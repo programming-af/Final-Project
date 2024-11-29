@@ -1,22 +1,12 @@
 ---
 title: "Final Project Data Processing"
 format: 
-  pdf:
-    keep-tex: true
-    include-in-header: 
-       text: |
-         \usepackage{fvextra}
-         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
-include-before-body:
-  text: |
-    \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
-      showspaces = false,
-      showtabs = false,
-      breaksymbolleft={},
-      breaklines
-    }
+    html:
+        code-overflow: wrap 
+execute:
+  eval: true
+  echo: true
 ---
-
 
 ```{python}
 ### SETUP 
