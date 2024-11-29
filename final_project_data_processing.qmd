@@ -430,7 +430,7 @@ death_ch = alt.Chart(violence_death_df).mark_line(color='blue').encode(
 violence_death = alt.layer(violence_ch, death_ch).resolve_scale(
     y='independent'  # Ensure each Y-axis is independent
 ).properties(
-    title='Violent Events and Birth Rates Over Time',
+    title='Violent Events and Under-5y/o Death Rates Over Time',
     width=600,
     height=400
 )
