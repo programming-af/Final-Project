@@ -392,13 +392,13 @@ violence_birth_df = crime_effects_development.groupby('Year').agg({
 # graph
 violence_ch = alt.Chart(violence_birth_df).mark_line(color='red').encode(
     x=alt.X('Year:O', title='Year'),
-    y=alt.Y('violence_events:Q', axis=alt.Axis(title='Violent events (Total)', labelColor='red')),
+    y=alt.Y('violence_events:Q', axis=alt.Axis(title='Violent events (Total)', labelColor='red'), scale=alt.Scale(domain=[1500, 2800])),
     tooltip=[ 'Year', 'violence_events']
 ).properties(title='Violence Over Time',width=600, height=400)
 
 birth_ch = alt.Chart(violence_birth_df).mark_line(color='green').encode(
     x=alt.X('Year:O', title='Year'),
-    y=alt.Y('Fertility rate, total (births per woman):Q', axis=alt.Axis(title='Births Per Woman', labelColor='green')),
+    y=alt.Y('Fertility rate, total (births per woman):Q', axis=alt.Axis(title='Births Per Woman', labelColor='green'),scale=alt.Scale(domain=[1.9, 2.4])),
     tooltip=['Year', 'Fertility rate, total (births per woman)']
 ).properties(title='Birth Rates Over Time',width=600, height=400)
 
@@ -423,7 +423,7 @@ violence_death_df = crime_effects_development.groupby('Year').agg({
 # graph
 death_ch = alt.Chart(violence_death_df).mark_line(color='blue').encode(
     x=alt.X('Year:O', title='Year'),
-    y=alt.Y('Number of under-five deaths:Q', axis=alt.Axis(title='Under 5y/o Deaths (Total)', labelColor='blue')),
+    y=alt.Y('Number of under-five deaths:Q', axis=alt.Axis(title='Under 5y/o Deaths (Total)', labelColor='blue'),scale=alt.Scale(domain=[16000, 21000])),
     tooltip=['Year', 'Number of under-five deaths']
 ).properties(title='Under 5 Deaths Over Time',width=600, height=400)
 
@@ -435,4 +435,56 @@ violence_death = alt.layer(violence_ch, death_ch).resolve_scale(
     height=400
 )
 violence_death
+```
+
+
+#### debt payents
+```{python}
+# violence and debt payments
+violence_debt_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Total debt service (% of GNI)': 'mean'
+}).reset_index()
+
+# graph
+debt_ch = alt.Chart(violence_debt_df).mark_line(color='orange').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Total debt service (% of GNI):Q', axis=alt.Axis(title='Debt Payments (%GNI)', labelColor='orange'), scale=alt.Scale(domain=[6, 14])),
+    tooltip=['Year', 'Total debt service (% of GNI)']
+).properties(title='Debt Payments Over Time',width=600, height=400)
+
+violence_debt = alt.layer(violence_ch, debt_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and National Debt Payment Over Time',
+    width=600,
+    height=400
+)
+violence_debt
+```
+
+
+#### Education 
+```{python}
+# violence and debt payments
+violence_edu_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Primary education, pupils': 'sum'
+}).reset_index()
+
+# graph
+edu_ch = alt.Chart(violence_edu_df).mark_line(color='cyan').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Primary education, pupils:Q', axis=alt.Axis(title='Total number of Students', labelColor='cyan'), scale=alt.Scale(domain=[5800000, 6100000])),
+    tooltip=['Year', 'Primary education, pupils']
+).properties(title='Education over time',width=600, height=400)
+
+violence_edu = alt.layer(violence_ch, edu_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and Number of Students over time',
+    width=600,
+    height=400
+)
+violence_edu
 ```
