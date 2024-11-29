@@ -41,7 +41,15 @@ os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\D
 ```
 Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
 
+ORIGINAL UNPROCESSED DATA:
+https://drive.google.com/drive/folders/1Mfv-cvmm9iIgnQ7UKKiMuoTJo0Vjpcv4?usp=sharing
+
+
 loading the data created from 'final_project_data_clean'
+
+LINK FOR DATA (uploaded in google drive):
+https://drive.google.com/drive/folders/1los_5JwF1rNVOaFtjH1B2Z8thgmBXHxC?usp=drive_link
+
 ```{python}
 ### LOAD DATA
 wbcm_pv = pd.read_csv('central_america_data_cleaned.csv') # world bank dataset from kaggle
@@ -49,7 +57,6 @@ wbdi_CA = pd.read_csv('world_bank_development_indicators_cleaned.csv') # world b
 acled_CA = pd.read_csv('acled_project_data_cleaned.csv') # ACLED
 ```
 
-## Will Code: Inital Visualizations and merging. 
 ## First, Lets look at the columns and how many NAs are in each df
 
 ```{python}
@@ -67,25 +74,28 @@ print(acled_CA.columns)
 print(acled_CA.isnull().sum())
 ```
 
-## Now Lets do some summary statistics by each country for EDA, before we merge them
+## datatype cleaning between datasets
 
 ```{python}
 #Rename Columns for merges and such
 wbdi_CA.rename(columns={'country': 'Country', 'date': 'Year'}, inplace=True)
-wbcm_pv.rename(columns={'Country': 'Country', 'Year': 'Year'}, inplace=True)
+wbcm_pv.rename(columns={'Country Name': 'Country', 'Year': 'Year'}, inplace=True)
 acled_CA.rename(columns={'country': 'Country', 'year': 'Year'}, inplace=True)
-```
 
-```{python}
 # cleaning dtypes
 acled_CA['Year'] = pd.to_numeric(acled_CA['Year'], errors='coerce', downcast='integer')
 print(acled_CA['Year'].head())
-```
 
-```{python}
 # make non datetime dates to datetime
 acled_CA['Year'] = pd.to_datetime(acled_CA['event_date'], errors='coerce').dt.year
 wbdi_CA['Year'] = pd.to_datetime(wbdi_CA['Year'], errors='coerce')
+
+# cleaning year dtypes
+acled_CA['Year'] = acled_CA['Year'].astype(int)
+wbdi_CA['Year'] = wbdi_CA['Year'].dt.year
+wbdi_CA['Year'] = wbdi_CA['Year'].astype(int)
+wbcm_pv['Year'] = wbcm_pv['Year'].astype(int)
+
 ```
 
 
@@ -105,7 +115,7 @@ print("Top indicators in WBDI:\n", nonmissing_wbdi.head(10))
 ```{python}
 ## Political Stability
 alt.Chart(wbdi_CA).mark_line().encode(
-    x=alt.X('Year:T', title='Year'),
+    x=alt.X('Year:O', title='Year'),
     y=alt.Y('political_stability_estimate', title='Political Stability by Year'),
     color='Country:N',
     tooltip=['Country', 'Year', 'political_stability_estimate']
@@ -115,7 +125,7 @@ alt.Chart(wbdi_CA).mark_line().encode(
 
 ```
 
-*not including mexico because country too large and diverse and different from other central american countries
+*not including mexico because country too large and diverse and different from other central american countries. Localized ffects of Violence hard to measure in Mexico, and confounding factors too numerous.
 
 ```{python}
 # Filter out Mexico
@@ -123,7 +133,7 @@ filtered_data = wbdi_CA[wbdi_CA['Country'] != 'Mexico']
 
 # Plot GDP per Capita Over Time without Mexico
 alt.Chart(filtered_data).mark_line().encode(
-    x=alt.X('Year:T', title='Year'),
+    x=alt.X('Year:O', title='Year'),
     y=alt.Y('GDP_current_US:Q', title='GDP (Current US$)'),
     color='Country:N',
     tooltip=['Country', 'Year', 'GDP_current_US']
@@ -134,7 +144,7 @@ alt.Chart(filtered_data).mark_line().encode(
 ```{python}
 #Homicide Rates
 alt.Chart(wbdi_CA).mark_line().encode(
-    x=alt.X('Year:T', title='Year'),
+    x=alt.X('Year:O', title='Year'),
     y=alt.Y('intentional_homicides:Q', title='Homicide Rate (Total)'),
     color='Country:N',
     tooltip=['Country', 'Year', 'intentional_homicides']
@@ -199,7 +209,7 @@ acled_gdf = gpd.GeoDataFrame(acled_CA, geometry=geometry, crs='EPSG:4326')
 
 ```{python}
 #shapefile_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp'    # will wd
-#shapefile_path = "d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp"    # andy wd
+shapefile_path = "d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\ne_110m_admin_0_countries\\ne_110m_admin_0_countries.shp"    # andy wd
 
 latin_america = gpd.read_file(shapefile_path)
 countries_in_data = acled_CA['Country'].unique()
@@ -268,13 +278,10 @@ for year in years:
 ```
 
 
-## Merge ACLED and WBDI(central america)
+## Graphing relationship between violent events and gdp 
 
 ```{python}
-acled_CA['Year'] = acled_CA['Year'].astype(int)
-wbdi_CA['Year'] = wbdi_CA['Year'].dt.year
-wbdi_CA['Year'] = wbdi_CA['Year'].astype(int)
-
+# Merge ACLED and WBDI(central america)
 el_salvador_violence = acled_CA[acled_CA['Country'] == 'El Salvador']
 el_salvador_gdp = wbdi_CA[wbdi_CA['Country'] == 'El Salvador']
 
@@ -313,14 +320,13 @@ fig.tight_layout()
 plt.show()
 ```
 
-## Looking at El Salvador
+## Looking at El Salvador violent events and gdp
 
 ```{python}
 print(wbdi_CA['Year'].head(10))
 print(wbdi_CA['Year'].dtype)
 ```
 
-## Plotting 
 ```{python}
 # Altair plot for Violent Events and Average GDP
 base = alt.Chart(violence_gdp_time).encode(
@@ -347,6 +353,138 @@ el_salv_chart = alt.layer(line_violence, line_gdp).resolve_scale(
     width=600,
     height=400
 )
+# suggest adding a tooltip here to make clear which line is which
 
 el_salv_chart
+```
+
+
+## further examining relationship between violent events on other development indicators
+
+*mexico is removed again for reasons mentioned above
+
+```{python}
+#### preparing data for merge
+# acled data (counts of violence) group by year 
+acled_CA_gp = acled_CA.groupby(['Country', 'Year']).size().reset_index(name='violence_events')
+acled_CA_gp = acled_CA_gp[acled_CA_gp['Country'] != 'Mexico'] 
+acled_CA_gp = acled_CA_gp[acled_CA_gp['Year'] <= 2022]
+
+# world bank data
+wbcm_pv_gp = wbcm_pv[(wbcm_pv['Year'] >= 2018) & (wbcm_pv['Year'] <= 2022)]
+wbcm_pv_gp = wbcm_pv_gp[wbcm_pv_gp['Country'] != 'Mexico'] 
+
+# merge
+crime_effects_development = pd.merge(acled_CA_gp, wbcm_pv_gp, on=['Country', 'Year'], how='inner')
+crime_effects_development.columns
+```
+
+## Graphs of violence events on economic and development indicators
+
+#### birth rates
+```{python}
+# violence and birth rates
+violence_birth_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Fertility rate, total (births per woman)': 'mean'
+}).reset_index()
+
+# graph
+violence_ch = alt.Chart(violence_birth_df).mark_line(color='red').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('violence_events:Q', axis=alt.Axis(title='Violent events (Total)', labelColor='red'), scale=alt.Scale(domain=[1500, 2800])),
+    tooltip=[ 'Year', 'violence_events']
+).properties(title='Violence Over Time',width=600, height=400)
+
+birth_ch = alt.Chart(violence_birth_df).mark_line(color='green').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Fertility rate, total (births per woman):Q', axis=alt.Axis(title='Births Per Woman', labelColor='green'),scale=alt.Scale(domain=[1.9, 2.4])),
+    tooltip=['Year', 'Fertility rate, total (births per woman)']
+).properties(title='Birth Rates Over Time',width=600, height=400)
+
+violence_birth = alt.layer(violence_ch, birth_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and Birth Rates Over Time',
+    width=600,
+    height=400
+)
+violence_birth
+```
+
+#### child death rates
+```{python}
+# violence and child death rates
+violence_death_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Number of under-five deaths': 'sum'
+}).reset_index()
+
+# graph
+death_ch = alt.Chart(violence_death_df).mark_line(color='blue').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Number of under-five deaths:Q', axis=alt.Axis(title='Under 5y/o Deaths (Total)', labelColor='blue'),scale=alt.Scale(domain=[16000, 21000])),
+    tooltip=['Year', 'Number of under-five deaths']
+).properties(title='Under 5 Deaths Over Time',width=600, height=400)
+
+violence_death = alt.layer(violence_ch, death_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and Under-5y/o Death Rates Over Time',
+    width=600,
+    height=400
+)
+violence_death
+```
+
+
+#### debt payents
+```{python}
+# violence and debt payments
+violence_debt_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Total debt service (% of GNI)': 'mean'
+}).reset_index()
+
+# graph
+debt_ch = alt.Chart(violence_debt_df).mark_line(color='orange').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Total debt service (% of GNI):Q', axis=alt.Axis(title='Debt Payments (%GNI)', labelColor='orange'), scale=alt.Scale(domain=[6, 14])),
+    tooltip=['Year', 'Total debt service (% of GNI)']
+).properties(title='Debt Payments Over Time',width=600, height=400)
+
+violence_debt = alt.layer(violence_ch, debt_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and National Debt Payment Over Time',
+    width=600,
+    height=400
+)
+violence_debt
+```
+
+
+#### Education 
+```{python}
+# violence and debt payments
+violence_edu_df = crime_effects_development.groupby('Year').agg({
+    'violence_events': 'sum',
+    'Primary education, pupils': 'sum'
+}).reset_index()
+
+# graph
+edu_ch = alt.Chart(violence_edu_df).mark_line(color='cyan').encode(
+    x=alt.X('Year:O', title='Year'),
+    y=alt.Y('Primary education, pupils:Q', axis=alt.Axis(title='Total number of Students', labelColor='cyan'), scale=alt.Scale(domain=[5800000, 6100000])),
+    tooltip=['Year', 'Primary education, pupils']
+).properties(title='Education over time',width=600, height=400)
+
+violence_edu = alt.layer(violence_ch, edu_ch).resolve_scale(
+    y='independent'  # Ensure each Y-axis is independent
+).properties(
+    title='Violent Events and Number of Students over time',
+    width=600,
+    height=400
+)
+violence_edu
 ```
