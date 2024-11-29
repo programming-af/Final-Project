@@ -221,63 +221,6 @@ num_event_types = len(event_types)
 ```
 
 
-## Interactive Maps of Violence by Year (DO NOT RUN)
-```
-#def create_interactive_map(acled_data, shapefile, year):
-    # Filter data for the specific year
-    #yearly_data = acled_data[acled_data['Year'] == year]
-    
-    # Initialize the map centered around Latin America
-    m = folium.Map(location=[0, -70], zoom_start=3, tiles='OpenStreetMap')
-    
-    # Add country boundaries
-    folium.GeoJson(
-        shapefile.to_crs(epsg=4326),
-        style_function=lambda x: {'fillColor': 'white', 'color': 'black', 'weight': 1, 'fillOpacity': 0.1}
-    ).add_to(m)
-    
-    # Create a marker cluster
-    marker_cluster = MarkerCluster().add_to(m)
-    
-    # Loop through the data and add markers
-    for idx, row in yearly_data.iterrows():
-        # Prepare the tooltip content
-        tooltip_content = (
-            f"<b>Event Type:</b> {row['event_type']}<br>"
-            f"<b>Date:</b> {row['event_date']}<br>"
-            f"<b>Location:</b> {row.get('admin1', 'N/A')}, {row['Country']}<br>"
-            f"<b>Notes:</b> {row.get('notes', 'N/A')}"
-        )
-        
-        # Determine marker color based on event type
-        if row['event_type'] == 'Violence against civilians':
-            marker_color = 'red'
-        elif row['event_type'] == 'Protests':
-            marker_color = 'blue'
-        elif row['event_type'] == 'Riots':
-            marker_color = 'purple'
-        else:
-            marker_color = 'green'
-        
-        # Add marker to the cluster
-        folium.Marker(
-            location=[row['latitude'], row['longitude']],
-            tooltip=tooltip_content,
-            icon=folium.Icon(color=marker_color, icon='info-sign')
-        ).add_to(marker_cluster)
-    
-    # Save the map to an HTML file
-    map_filename = f'violent_events_map_{year}.html'
-    m.save(map_filename)
-    print(f"Interactive map for {year} saved as {map_filename}.")
-
-# Create interactive maps for each year
-years = sorted(acled_CA['Year'].unique())
-for year in years:
-   # create_interactive_map(acled_CA, latin_america, year)
-```
-
-
 ## Graphing relationship between violent events and gdp 
 
 ```{python}
