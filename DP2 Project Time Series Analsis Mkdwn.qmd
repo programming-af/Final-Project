@@ -1,0 +1,245 @@
+---
+title: "DP2 Final Project Time Series Analysis"
+format: html
+---
+
+Data Preparation
+```{python}
+# Download packages
+import pandas as pd
+import altair as alt
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import statsmodels.api as sm
+
+# Download data 
+folder_path = r"C:\Users\jmull\Downloads" # Edit this to chose where you want your data
+file_path = r"ACLED_2017-2024-Q1-QTA.csv"
+full_path = os.path.join(folder_path, file_path)
+acled = pd.read_csv(full_path)
+
+# Clean data (keeps all Mexico data, which we remove either way)
+CA_countries = ['Belize', 'Costa Rica', 'El Salvador', 'Guatemala', 'Honduras', 'Mexico', 'Nicaragua', 'Panama']
+df_acled = acled[acled["country"].isin(CA_countries)]
+
+# Download data
+df_acled = pd.read_csv("C:/Users/jmull/Downloads/acled_project_data_cleaned.csv")
+```
+
+Chart 1: Monthly Attacks By Central American Country
+```{python}
+# Ensure 'event_date' is in datetime format
+df_acled['event_date'] = pd.to_datetime(df_acled['event_date'])
+
+# Create a quarter column based on the event_date
+df_acled['quarter'] = df_acled['event_date'].dt.to_period('M').dt.start_time
+# I originally did it for quarters but switched it up to months in the line above. 
+# Did not change the column names to month but can do this later if we stick to months.
+
+# Count crimes per country and quarter
+attack_counts = df_acled.groupby(['country', 'quarter']).size().reset_index(name='attack_count')
+
+# Exclude mexico (outlier)
+attack_counts = attack_counts[attack_counts['country'] != 'Mexico']
+
+# Save the quarters as strings
+attack_counts['quarter'] = attack_counts['quarter'].astype(str)
+
+# Create a DataFrame for policy change annotations
+policy_changes = pd.DataFrame({
+    'policy_name': [
+        'Territorial Control Plan', 
+        'COVID Pandemic', 
+        'State of Emergency',
+        'Mass Incarceration'
+    ],
+    'policy_date': [
+        '2019-06-01', 
+        '2020-03-18',
+        '2022-03-27',
+        '2023-02-01'
+    ]
+})
+
+# Convert policy_date to datetime
+policy_changes['policy_date'] = pd.to_datetime(policy_changes['policy_date'])
+
+# Create the chart
+quarter_attacks_line_chart = alt.Chart(attack_counts).mark_line(point=False).encode(
+    x=alt.X('quarter:T', title='', axis=alt.Axis(format='%b %Y', labelAngle=30, labelOverlap=False)),
+    y=alt.Y('attack_count:Q', title='', scale=alt.Scale(domain=[0, 140])),
+    color=alt.Color('country:N', title='Country')
+).properties(
+    title='Monthly Attacks By Central American Country',
+    width=650,
+    height=400
+)
+
+# Vertical lines for interventions
+policy_lines = alt.Chart(policy_changes).mark_rule(color='red', strokeDash=[1, 2], strokeWidth = 5).encode(
+    x='policy_date:T',
+    tooltip=['policy_name', 'policy_date']
+)
+
+# Text labels for interventions
+policy_labels = alt.Chart(policy_changes).mark_text(align='left', dx= 5, dy=-190, fontSize=8).encode(
+    x='policy_date:T',
+    text='policy_name:N'
+)
+
+# Combine the base chart, policy lines, and labels
+final_chart = quarter_attacks_line_chart + policy_lines + policy_labels
+
+# Display the chart
+final_chart.display()
+```
+
+Chart 2: Monthly El Salvador Attacks With Period-Invariant OLS Regression Line
+```{python}
+# Only include El Salvador
+attack_counts = attack_counts[attack_counts['country'].isin(['El Salvador'])]
+
+# Prepare for OLS regression
+attack_counts['quarter'] = pd.to_datetime(attack_counts['quarter'])
+attack_counts = attack_counts.sort_values(['country', 'quarter'])
+attack_counts['time_numeric'] = (attack_counts['quarter'] - attack_counts['quarter'].min()).dt.days
+
+# Run OLS 
+X = sm.add_constant(attack_counts['time_numeric'])
+y = attack_counts['attack_count']
+model = sm.OLS(y, X).fit()
+attack_counts['ols_prediction'] = model.predict(X)
+
+# Define policy interventions
+policy_changes = pd.DataFrame({
+    'policy_name': [
+        'Territorial Control Plan', 
+        'COVID Pandemic', 
+        'State of Emergency',
+        'Mass Incarceration'
+    ],
+    'policy_date': [
+        '2019-06-01', 
+        '2020-03-18',
+        '2022-03-27',
+        '2023-02-01'
+    ]
+})
+policy_changes['policy_date'] = pd.to_datetime(policy_changes['policy_date'])
+
+# Create the  chart
+quarter_attacks_line_chart = alt.Chart(attack_counts).mark_line(point=True).encode(
+    x=alt.X('quarter:T', title='', axis=alt.Axis(format='%b %Y', labelAngle=30, labelOverlap=False)),
+    y=alt.Y('attack_count:Q', title='', scale=alt.Scale(domain=[0, 100])),
+    color=alt.Color('country:N', title='Country', legend = None)
+).properties(
+    title='Monthly El Salvador Attacks With Period-Invariant OLS Regression Line',
+    width=700,
+    height=400
+)
+
+# Add the OLS regression line
+ols_line = alt.Chart(attack_counts).mark_line(color='black', strokeDash=[5, 3], strokeWidth=2).encode(
+    x='quarter:T',
+    y='ols_prediction:Q',
+    tooltip=['quarter:T', 'ols_prediction:Q']
+)
+
+# Add vertical lines for policy interventions
+policy_lines = alt.Chart(policy_changes).mark_rule(color='red', strokeDash=[1, 2], strokeWidth = 5).encode(
+    x='policy_date:T',
+    tooltip=['policy_name', 'policy_date']
+)
+
+# Add text labels for policy interventions
+policy_labels = alt.Chart(policy_changes).mark_text(align='left', dx=5, dy=-190, fontSize=8).encode(
+    x='policy_date:T',
+    text='policy_name:N'
+)
+
+# Combine all layers
+final_chart = quarter_attacks_line_chart + ols_line + policy_lines + policy_labels
+
+# Display the chart
+final_chart.display()
+```
+
+Chart 3: Monthly El Salvador Attacks With Period-Variant OLS Regression Line
+```{python}
+# Divide data into time periods based on policy dates
+policy_changes = policy_changes.sort_values('policy_date')
+policy_dates = policy_changes['policy_date'].tolist()
+
+# Add start and end dates to cover full range
+start_date = attack_counts['quarter'].min()
+end_date = attack_counts['quarter'].max()
+policy_dates = [start_date] + policy_dates + [end_date]
+
+# Segment data into periods
+attack_counts['period'] = pd.cut(
+    attack_counts['quarter'], 
+    bins=policy_dates, 
+    labels=[f"Period {i}" for i in range(len(policy_dates)-1)],
+    include_lowest=True
+)
+
+# Perform OLS regression for each period and country (keep flexible for many countries)
+ols_period_predictions = []
+for (country, period), period_data in attack_counts.groupby(['country', 'period']):
+    period_data['time_numeric'] = (period_data['quarter'] - period_data['quarter'].min()).dt.days
+    X = sm.add_constant(period_data['time_numeric'])
+    y = period_data['attack_count']
+    
+    if len(period_data) > 1:  
+        model = sm.OLS(y, X).fit()
+        period_data['ols_prediction'] = model.predict(X)
+    else:
+        period_data['ols_prediction'] = None
+
+    period_data['regression_period'] = f"{country} {period}"
+    ols_period_predictions.append(period_data)
+
+# Combine all predictions back into a single DataFrame
+attack_counts_with_period_ols = pd.concat(ols_period_predictions)
+
+# Create the base chart for actual data
+quarter_attacks_line_chart = alt.Chart(attack_counts_with_period_ols).mark_line(point=True).encode(
+    x=alt.X('quarter:T', title='', axis=alt.Axis(format='%b %Y', labelAngle=30, labelOverlap=False)),
+    y=alt.Y('attack_count:Q', title='', scale=alt.Scale(domain=[0, 100])),
+    color=alt.Color('country:N', title='Country', legend = None),
+).properties(
+    title='Monthly El Salvador Attacks with Period-Variant OLS Regression Lines',
+    width=700,
+    height=400
+)
+
+# Add the OLS regression lines for each period
+ols_lines = alt.Chart(attack_counts_with_period_ols).mark_line(
+    color='black', 
+    strokeDash=[5, 3], 
+    strokeWidth=2
+).encode(
+    x=alt.X('quarter:T'),
+    y=alt.Y('ols_prediction:Q'),
+    detail='regression_period:N', 
+)
+
+# Vertical lines for policy interventions
+policy_lines = alt.Chart(policy_changes).mark_rule(color='red', strokeDash=[1, 2], strokeWidth = 5).encode(
+    x='policy_date:T',
+    tooltip=['policy_name', 'policy_date']
+)
+
+# Text labels for policy interventions
+policy_labels = alt.Chart(policy_changes).mark_text(align='left', dx=5, dy=-190, fontSize=8).encode(
+    x='policy_date:T',
+    text='policy_name:N'
+)
+
+# Combine all layers
+final_chart_with_period_ols = quarter_attacks_line_chart + ols_lines + policy_lines + policy_labels
+
+# Display the chart
+final_chart_with_period_ols.display()
+```
