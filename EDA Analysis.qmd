@@ -46,7 +46,7 @@ bar_chart.show()
 
 ## Line Chart for Crimes
 ```{python}
-# Create the line chart
+
 line_chart = alt.Chart(aggregated_data).mark_line(point=True).encode(
     x=alt.X('year:O', title='Year'),
     y=alt.Y('total_crimes:Q', title='Total Crimes'),
@@ -58,10 +58,67 @@ line_chart = alt.Chart(aggregated_data).mark_line(point=True).encode(
     height=400
 )
 
+
+line_chart.show()
+```
+
+## Lets rerun with Violent Crimes per Person
+
+```{python}
+wbdi = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Clean Data /world_bank_development_indicators_cleaned.csv')
+
+wbdi['year'] = pd.to_datetime(wbdi['date']).dt.year
+
+wbdi = wbdi.rename(columns={'population': 'Population'})
+
+
+merged_data = pd.merge(aggregated_data, wbdi[['country', 'year', 'Population']],
+                       on=['country', 'year'], 
+                       how='left')
+
+
+merged_data['crimes_per_person'] = merged_data['total_crimes'] / merged_data['Population']
+
+
+
+
+line_chart = alt.Chart(merged_data).mark_line(point=True).encode(
+    x=alt.X('year:O', title='Year'),
+    y=alt.Y('crimes_per_person:Q', title='Crimes per Person'),
+    color=alt.Color('country:N', title='Country'),
+    tooltip=['country', 'year', 'crimes_per_person']
+).properties(
+    title="Crimes Per Person Per Year Per Country",
+    width=400,
+    height=400
+)
+
 # Display the chart
 line_chart.show()
 ```
 
+```{python}
+wbdi.columns
+```
+
+## VS Line of only crimes in wbdi
+```{python}
+wbdi['homicide_per_person'] = wbdi['intentional_homicides'] / wbdi['Population']
+
+line_chart_wbdi = alt.Chart(wbdi).mark_line(point=True).encode(
+    x=alt.X('date:T', title = 'Year'),
+    y=alt.Y('homicide_per_person:Q', title= 'Homicide Per Person'),
+    color=alt.Color('country:N', title= 'Country'),
+    tooltip=['country', 'date', 'homicide_per_person']
+).properties(
+    title="Crimes Per Person Per Year Per Country",
+    width=400,
+    height=400
+)
+
+line_chart_wbdi
+
+```
 
 ```{python}
 # Filter data for El Salvador
@@ -235,10 +292,10 @@ actor_mapping = {
     'Unidentified Armed Group (El Salvador)': 'Unidentified Group (El Salvador)'
 }
 
-# Apply the mapping to the `actor1` column
+#Apply the mapping to the `actor1` column
 actors_df['cleaned_actor1'] = actors_df['actor1'].replace(actor_mapping)
 
-# group by categories
+#group by categories
 tidy_actor_counts = (
     actors_df.groupby('cleaned_actor1')['count_actors']
     .sum()
@@ -284,83 +341,156 @@ bar_chart_crime.show()
 ```
 
 
+## Topic Modeling
 
-### Now lets load the other datsets and do some dimension reduction
+
 ```{python}
-import os
+import gensim
+from gensim import corpora
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS
+import re
+import altair as alt
+import pandas as pd
 
-os.chdir('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Clean Data ')
 
-wbdi = pd.read_csv('world_bank_development_indicators_cleaned.csv')
+el_salvador_filtered = acled_2013[acled_2013['country'] == 'El Salvador']
 
-wbpv = pd.read_csv('central_america_data_cleaned.csv')
+## Preprocess
+def preprocess_text_column(text):
+    text = text.lower()
+    text = re.sub(r'\W+', ' ', text)
+    tokens = text.split()
+    tokens = [word for word in tokens if word not in ENGLISH_STOP_WORDS and len(word) > 3] 
+    return tokens
+
+
+el_salvador_filtered['notes_cleaned'] = el_salvador_filtered['notes'].apply(
+    lambda x: preprocess_text_column(x) if isinstance(x, str) else []
+)
+
+#Build the dictionary/ corpus
+lda_dictionary = corpora.Dictionary(el_salvador_filtered['notes_cleaned'])
+lda_corpus = [lda_dictionary.doc2bow(text) for text in el_salvador_filtered['notes_cleaned']]
+
+# Train LDA model on all years
+lda_model = gensim.models.LdaModel(
+    lda_corpus, 
+    num_topics=5,  # Adjust as needed
+    id2word=lda_dictionary, 
+    passes=15
+)
+
+# Get the top words for each topic
+def get_topic_top_words(lda_model, num_words=5):
+    topics = lda_model.print_topics(num_topics=-1, num_words=num_words)
+    topic_dict = {
+        topic_id: [word.split("*")[1].strip('"') for word in topic_desc.split(" + ")]
+        for topic_id, topic_desc in topics
+    }
+    return topic_dict
+
+topic_words = get_topic_top_words(lda_model, num_words=5)
+
+# Convert topics to a DataFrame for tabular display
+topic_words_table = pd.DataFrame([
+    {"Topic": topic_id, "Words": ", ".join(words)}
+    for topic_id, words in topic_words.items()
+])
+
+
+def calculate_topic_distribution(document):
+    topic_distribution = lda_model.get_document_topics(document, minimum_probability=0.0)
+    return [prob for _, prob in topic_distribution]
+
+el_salvador_filtered['topic_distribution'] = el_salvador_filtered['notes_cleaned'].apply(
+    lambda x: calculate_topic_distribution(lda_dictionary.doc2bow(x))
+)
+
+# Reset index to ensure alignment
+el_salvador_filtered = el_salvador_filtered.reset_index(drop=True)
+
+# Create DataFrame from topic distributions
+topic_columns = [f"Topic {i}" for i in range(lda_model.num_topics)]
+topic_distributions_df = pd.DataFrame(
+    el_salvador_filtered['topic_distribution'].tolist(), 
+    columns=topic_columns
+)
+
+#concat back into df
+el_salvador_filtered = pd.concat([el_salvador_filtered, topic_distributions_df], axis=1)
+
+#aggregate topic proportions by year
+topics_over_time = el_salvador_filtered.groupby('year')[topic_columns].mean().reset_index()
+
+#visualize topic proportions over time
+topics_melted = topics_over_time.melt(id_vars='year', var_name='Topic', value_name='Proportion')
+
+topic_chart = alt.Chart(topics_melted).mark_line(point=True).encode(
+    x='year:O',
+    y='Proportion:Q',
+    color='Topic:N',
+    tooltip=['year', 'Topic', 'Proportion']
+).properties(
+    title="Topic Proportions Over Time",
+    width=600,
+    height=400
+)
+
+topic_chart.show()
+```
+
+```{python}
+print(topic_words_table)
 ```
 
 
 ```{python}
-# Display the structure of the datasets
-print("World Bank Development Indicators:")
-print(wbdi.info())
-print("\nCentral America Data:")
-print(wbpv.info())
+from collections import Counter
 
-# View column names and basic statistics
-print("World Bank Columns:", wbdi.columns)
-print("Central America Columns:", wbpv.columns)
+#  word frequencies for each year
+def get_word_frequencies_by_year(df):
+    word_frequencies = {}
+    for year, group in df.groupby('year'):
+        all_words = [word for text in group['notes_cleaned'] for word in text]
+        word_counts = Counter(all_words)
+        word_frequencies[year] = word_counts
+    return word_frequencies
 
-# Check for missing values
-print("Missing Values in WBDI:")
-print(wbdi.isnull().sum())
-print("\nMissing Values in WBPV:")
-print(wbpv.isnull().sum())
+
+word_frequencies_by_year = get_word_frequencies_by_year(el_salvador_filtered)
+
+# Convert to DF
+word_freq_df = pd.DataFrame([
+    {"Year": year, "Word": word, "Frequency": freq}
+    for year, word_counts in word_frequencies_by_year.items()
+    for word, freq in word_counts.items()
+])
+
+
+top_words_df = (
+    word_freq_df.groupby("Year")
+    .apply(lambda group: group.nlargest(10, "Frequency"))
+    .reset_index(drop=True)
+)
+
+
+alt.Chart(top_words_df).mark_bar().encode(
+    x=alt.X("Frequency:Q", title="Frequency"),
+    y=alt.Y("Word:N", title="Word", sort="-x"),
+    color="Year:N",
+    column=alt.Column("Year:O", title="Year")
+).properties(
+    title="Top Words by Year",
+    width=150,
+    height=400
+)
+
+
+
+
 ```
 
 
 ```{python}
-# Filter wbdi for relevant columns and drop columns with too many missing values
-wbdi_filtered = wbdi.dropna(thresh=len(wbdi) * 0.5, axis=1)
-wbdi_filtered = wbdi_filtered[
-    ['date', 'GDP_current_US', 'political_stability_estimate', 'rule_of_law_estimate',
-     'control_of_corruption_estimate', 'gini_index', 'life_expectancy_at_birth', 'population']
-]
-
-# Filter wbpv for El Salvador and drop unrelated columns
-wbpv_filtered = wbpv[wbpv['Country Name'] == 'El Salvador']
-wbpv_filtered = wbpv_filtered.drop(columns=['Country Name'], axis=1)
-
-# Make lower case
-wbdi_filtered.columns = wbdi_filtered.columns.str.lower()
-wbpv_filtered.columns = wbpv_filtered.columns.str.lower()
-el_salvador_data_2.columns = el_salvador_data_2.columns.str.lower()
-
-# Rename 'date' to 'year' in wbdi_filtered for merging
-wbdi_filtered = wbdi_filtered.rename(columns={'date': 'year'})
-```
-
-## Add medians for missing values
-```{python}
-# Convert the 'date' column to datetime
-wbdi_filtered['date'] = pd.to_datetime(wbdi_filtered['year'], errors='coerce')
-# Select only numeric columns for median imputation
-numeric_columns = wbdi_filtered.select_dtypes(include=['number']).columns
-
-# Fill missing values in numeric columns with their median
-wbdi_filtered[numeric_columns] = wbdi_filtered[numeric_columns].fillna(wbdi_filtered[numeric_columns].median())
-
-wbpv_filtered.fillna(wbpv_filtered.median(), inplace=True)
-```
-
-
-```{python}
-el_salvador_data_2['year'] = pd.to_numeric(el_salvador_data_2['year'], errors='coerce').astype('Int64')
-wbdi_filtered['year'] = pd.to_numeric(wbdi_filtered['year'], errors='coerce').astype('Int64')
-wbpv_filtered['year'] = pd.to_numeric(wbpv_filtered['year'], errors='coerce').astype('Int64')
-
-# Merge datasets on year
-el_salvador_data_combined = pd.merge(el_salvador_data_2, wbdi_filtered, on='year', how='left')
-el_salvador_data_combined = pd.merge(el_salvador_data_combined, wbpv_filtered, left_on='year', right_index=True, how='left')
-```
-
-```{python}
-print(el_salvador_data_combined.columns)
+ 
 ```
