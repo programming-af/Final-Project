@@ -491,6 +491,293 @@ alt.Chart(top_words_df).mark_bar().encode(
 ```
 
 
+## Mapping for Shiny APP
+## Look at administrative and geographic columns in ACLED Data
+## Bring in SHP file of Central American countries that has administrative columns 
+## Calculate events aggregation by type, count total and total by type for each admin in 2018, 2023. 
+## Graph Gradients of crime by each type on the maps
+
+
+
 ```{python}
- 
+# This is the column we want to track
+print(acled_2013['location'].unique)
+```
+
+
+```{python}
+import geopandas as gpd
+import matplotlib.pyplot as plt
+# GeoDataFrame for El Salvador administrative boundaries
+el_sal_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/slv_adm_gadm_20240819_ab_shp/slv_admbnda_adm3_gadm_20240819.shp'
+)
+
+# Ensure CRS is WGS84 for compatibility with event data
+el_sal_admin_boundaries = el_sal_admin_boundaries.to_crs("EPSG:4326")
+
+# Plot for verification
+el_sal_admin_boundaries.plot(edgecolor="black", figsize=(10, 8))
+plt.title("El Salvador Administrative Boundaries", fontsize=16)
+plt.show()
+```
+
+
+```{python}
+# GeoDataFrame for El Salvador event data
+el_sal_event_data = gpd.GeoDataFrame(
+    el_salvador_data_2,
+    geometry=gpd.points_from_xy(el_salvador_data_2.longitude, el_salvador_data_2.latitude),
+    crs="EPSG:4326"
+)
+
+```
+
+
+```{python}
+# Perform spatial join to assign events to administrative boundaries
+el_sal_events_with_boundaries = gpd.sjoin(
+    el_sal_event_data, el_sal_admin_boundaries, how="left", predicate="within"
+)
+```
+
+
+```{python}
+# Filter for relevant years
+el_sal_events_filtered = el_sal_events_with_boundaries[
+    el_sal_events_with_boundaries['year'].isin([2018, 2023])
+]
+
+# Aggregate event counts by administrative boundary and year
+el_sal_events_aggregated = (
+    el_sal_events_filtered.groupby(['ADM3_PCODE', 'year'])
+    .size()
+    .unstack(fill_value=0)
+    .reset_index()
+)
+
+# Rename columns dynamically for better clarity
+column_names = ['admin_boundary_code', 'event_count_2018', 'event_count_2023']
+el_sal_events_aggregated.columns = column_names
+```
+
+
+```{python}
+# Add percent change column
+el_sal_events_aggregated['percent_change_events'] = (
+    (el_sal_events_aggregated['event_count_2023'] - el_sal_events_aggregated['event_count_2018'])
+    / el_sal_events_aggregated['event_count_2018'].replace(0, 1)  # Avoid division by zero
+) * 100  # Convert to percentage
+```
+
+
+```{python}
+# Merge event data with administrative boundaries
+el_sal_admin_with_events = el_sal_admin_boundaries.merge(
+    el_sal_events_aggregated, left_on='ADM3_PCODE', right_on='admin_boundary_code', how='left'
+)
+
+# Fill missing values
+el_sal_admin_with_events['percent_change_events'] = el_sal_admin_with_events['percent_change_events'].fillna(0)
+```
+
+
+
+## Now lets join all the path files and create a consolidated path file
+
+
+```{python}
+nica_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/NICA SHP/geoBoundaries-NIC-ADM2.shp'
+)
+
+
+guat_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Guatemala SHP/geoBoundaries-GTM-ADM2.shp'
+)
+
+hun_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Honduras SHP/geoBoundaries-HND-ADM2.shp'
+)
+
+panama_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/PANAMA SHP/whosonfirst-data-admin-pa-county-polygon.shp'
+)
+
+
+costa_rica_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Costa Rica SHP/geoBoundaries-CRI-ADM3.shp'
+)
+
+belize_admin_boundaries = gpd.read_file(
+    '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/Belize SHPs/geoBoundaries-BLZ-ADM2.shp'
+)
+
+
+
+```
+
+
+```{python}
+print("Belize Administrative Boundaries:")
+print(belize_admin_boundaries.head(), "\n")
+
+print("Nicaragua Administrative Boundaries:")
+print(nica_admin_boundaries.head(), "\n")
+
+print("Guatemala Administrative Boundaries:")
+print(guat_admin_boundaries.head(), "\n")
+
+print("Honduras Administrative Boundaries:")
+print(hun_admin_boundaries.head(), "\n")
+
+print("Panama Administrative Boundaries:")
+print(panama_admin_boundaries.head(), "\n")
+
+print("Costa Rica Administrative Boundaries:")
+print(costa_rica_admin_boundaries.head(), "\n")
+
+print("El Salvador Administrative Boundaries:")
+print(el_sal_admin_boundaries.head(), "\n")
+```
+
+```{python}
+# Ensure CRS is consistent
+desired_crs = "EPSG:4326"
+
+# Prepare and normalize each GeoDataFrame
+belize_admin_boundaries['country'] = 'Belize'
+belize_admin_boundaries = belize_admin_boundaries.rename(columns={
+    'shapeName': 'boundary_name', 
+    'shapeID': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+nica_admin_boundaries['country'] = 'Nicaragua'
+nica_admin_boundaries = nica_admin_boundaries.rename(columns={
+    'shapeName': 'boundary_name', 
+    'shapeID': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+guat_admin_boundaries['country'] = 'Guatemala'
+guat_admin_boundaries = guat_admin_boundaries.rename(columns={
+    'shapeName': 'boundary_name', 
+    'shapeID': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+hun_admin_boundaries['country'] = 'Honduras'
+hun_admin_boundaries = hun_admin_boundaries.rename(columns={
+    'shapeName': 'boundary_name', 
+    'shapeID': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+panama_admin_boundaries['country'] = 'Panama'
+panama_admin_boundaries = panama_admin_boundaries.rename(columns={
+    'name': 'boundary_name', 
+    'id': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+costa_rica_admin_boundaries['country'] = 'Costa Rica'
+costa_rica_admin_boundaries = costa_rica_admin_boundaries.rename(columns={
+    'shapeName': 'boundary_name', 
+    'shapeID': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+el_sal_admin_boundaries['country'] = 'El Salvador'
+el_sal_admin_boundaries = el_sal_admin_boundaries.rename(columns={
+    'ADM3_ES': 'boundary_name', 
+    'ADM3_PCODE': 'boundary_id'
+})[['country', 'boundary_name', 'boundary_id', 'geometry']].to_crs(desired_crs)
+
+# Combine all GeoDataFrames
+ca_admin_boundaries = gpd.GeoDataFrame(
+    pd.concat([
+        belize_admin_boundaries,
+        nica_admin_boundaries,
+        guat_admin_boundaries,
+        hun_admin_boundaries,
+        panama_admin_boundaries,
+        costa_rica_admin_boundaries,
+        el_sal_admin_boundaries
+    ], ignore_index=True),
+    crs=desired_crs
+)
+
+# Save to a shapefile or other formats if needed
+ca_admin_boundaries.to_file('ca_admin_boundaries1.shp', driver='ESRI Shapefile')
+
+```
+
+```{python}
+# Save to Shapefile
+ca_admin_boundaries.to_file('ca_admin_boundaries.shp', driver='ESRI Shapefile')
+```
+
+```{python}
+ca_admin_boundaries.plot(edgecolor="black", figsize=(10, 8))
+plt.title("Central American Administrative Boundaries", fontsize=16)
+plt.show()
+```
+
+
+```{python}
+ca_gdf = gpd.read_file(
+    '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries.shp')
+
+ca_gdf.head()
+```
+
+
+```{python}
+from shiny import App, render, ui
+import geopandas as gpd
+import pandas as pd
+import folium
+from folium.plugins import HeatMap
+
+# Load Data
+acled_2013 = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv')  # Replace with your event dataset
+ca_gdf = gpd.read_file('/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries.shp')  # Central America boundaries
+
+def preprocess_data():
+    # Ensure `acled_2013` is a GeoDataFrame for spatial operations
+    events_gdf = gpd.GeoDataFrame(
+        acled_2013,
+        geometry=gpd.points_from_xy(acled_2013['longitude'], acled_2013['latitude']),
+        crs="EPSG:4326"
+    )
+    
+    # Spatial join to map events to administrative boundaries
+    events_with_boundaries = gpd.sjoin(events_gdf, ca_gdf, how="left", predicate="within")
+    
+    # Filter for the years of interest
+    events_filtered = events_with_boundaries[events_with_boundaries['year'].isin([2018, 2023])]
+    
+    # Aggregate events by boundary, year, and crime type
+    events_agg = (
+        events_filtered.groupby(['boundary_i', 'year'])
+        .size()
+        .unstack(fill_value=0)
+        .reset_index()
+    )
+    
+    # Rename columns for clarity (if unstack didn't name them as expected)
+    events_agg.columns = ['boundary_i'] + [f'events_{int(col)}' for col in events_agg.columns[1:]]
+    
+    # Merge with boundary data
+    merged_df = ca_gdf.merge(events_agg, on='boundary_i', how='left')
+    
+    # Calculate percent change for each boundary
+    merged_df['percent_change'] = (
+        (merged_df['events_2023'] - merged_df['events_2018']) / merged_df['events_2018'].replace(0, 1) * 100
+    )
+    
+    return merged_df
+    
+merged_df = preprocess_data()
+```
+
+
+```{python}
+print(merged_df.head())
+print(merged_df.columns)
 ```
