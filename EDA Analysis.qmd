@@ -703,81 +703,26 @@ ca_admin_boundaries = gpd.GeoDataFrame(
 )
 
 # Save to a shapefile or other formats if needed
-ca_admin_boundaries.to_file('ca_admin_boundaries1.shp', driver='ESRI Shapefile')
+##ca_admin_boundaries.to_file('ca_admin_boundaries1.shp', driver='ESRI Shapefile')
 
 ```
 
 ```{python}
 # Save to Shapefile
-ca_admin_boundaries.to_file('ca_admin_boundaries.shp', driver='ESRI Shapefile')
+#ca_admin_boundaries.to_file('ca_admin_boundaries.shp', driver='ESRI Shapefile')
 ```
 
 ```{python}
-ca_admin_boundaries.plot(edgecolor="black", figsize=(10, 8))
-plt.title("Central American Administrative Boundaries", fontsize=16)
+#ca_admin_boundaries.plot(edgecolor="black", figsize=(10, 8))
+#plt.title("Central American Administrative Boundaries", fontsize=16)
 plt.show()
 ```
 
 
 ```{python}
-ca_gdf = gpd.read_file(
-    '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries.shp')
+#ca_gdf = gpd.read_file(
+    #'/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries.shp')
 
-ca_gdf.head()
+#ca_gdf.head()
 ```
 
-
-```{python}
-from shiny import App, render, ui
-import geopandas as gpd
-import pandas as pd
-import folium
-from folium.plugins import HeatMap
-
-# Load Data
-acled_2013 = pd.read_csv('/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv')  # Replace with your event dataset
-ca_gdf = gpd.read_file('/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries.shp')  # Central America boundaries
-
-def preprocess_data():
-    # Ensure `acled_2013` is a GeoDataFrame for spatial operations
-    events_gdf = gpd.GeoDataFrame(
-        acled_2013,
-        geometry=gpd.points_from_xy(acled_2013['longitude'], acled_2013['latitude']),
-        crs="EPSG:4326"
-    )
-    
-    # Spatial join to map events to administrative boundaries
-    events_with_boundaries = gpd.sjoin(events_gdf, ca_gdf, how="left", predicate="within")
-    
-    # Filter for the years of interest
-    events_filtered = events_with_boundaries[events_with_boundaries['year'].isin([2018, 2023])]
-    
-    # Aggregate events by boundary, year, and crime type
-    events_agg = (
-        events_filtered.groupby(['boundary_i', 'year'])
-        .size()
-        .unstack(fill_value=0)
-        .reset_index()
-    )
-    
-    # Rename columns for clarity (if unstack didn't name them as expected)
-    events_agg.columns = ['boundary_i'] + [f'events_{int(col)}' for col in events_agg.columns[1:]]
-    
-    # Merge with boundary data
-    merged_df = ca_gdf.merge(events_agg, on='boundary_i', how='left')
-    
-    # Calculate percent change for each boundary
-    merged_df['percent_change'] = (
-        (merged_df['events_2023'] - merged_df['events_2018']) / merged_df['events_2018'].replace(0, 1) * 100
-    )
-    
-    return merged_df
-    
-merged_df = preprocess_data()
-```
-
-
-```{python}
-print(merged_df.head())
-print(merged_df.columns)
-```
