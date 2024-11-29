@@ -5,8 +5,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Step 1: Load and preprocess data
-acled_file_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv'
-shapefile_path = '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries1.shp'
+### will wd
+#acled_file_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv'
+#shapefile_path = '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries1.shp'
+### andy wd
+acled_file_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data\\2013-01-01-2024-01-01-Central_America.csv'
+shapefile_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\CA_shape_files\\ca_admin_boundaries1.shp'
 
 # Load datasets
 acled_2013 = pd.read_csv(acled_file_path)
@@ -173,3 +177,6 @@ def server(input, output, session):
 
 # Step 4: Launch the app
 app = App(app_ui, server)
+
+### in terminal: 'shiny run app.py'
+### 'ctrl + c' to close
