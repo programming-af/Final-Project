@@ -6,11 +6,11 @@ import numpy as np
 
 # Step 1: Load and preprocess data
 ### will wd
-#acled_file_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv'
-#shapefile_path = '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries1.shp'
+acled_file_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/2013-01-01-2024-01-01-Central_America.csv'
+shapefile_path = '/Users/willsigal/Documents/GitHub/Final-Project/CA_shape_files/ca_admin_boundaries1.shp'
 ### andy wd
-acled_file_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data\\2013-01-01-2024-01-01-Central_America.csv'
-shapefile_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\CA_shape_files\\ca_admin_boundaries1.shp'
+#acled_file_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data\\2013-01-01-2024-01-01-Central_America.csv'
+#shapefile_path = 'd:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\CA_shape_files\\ca_admin_boundaries1.shp'
 
 # Load datasets
 acled_2013 = pd.read_csv(acled_file_path)
@@ -32,33 +32,29 @@ events_with_boundaries['country'] = events_with_boundaries['country_right']  # E
 event_types = ["All"] + events_with_boundaries['event_type'].dropna().unique().tolist()
 countries = ["All"] + ca_gdf["country"].dropna().unique().tolist()
 
-# Step 2: Define UI
+#  UI
 app_ui = ui.page_fluid(
     ui.h2("Central America Events Visualization"),
     ui.row(
         ui.column(
             6,
             ui.input_select("country_selector", "Select a Country", choices=countries),
-        ),
-        ui.column(
-            6,
             ui.input_select("event_type_selector", "Select Event Type", choices=event_types)
         )
     ),
     ui.row(
         ui.column(
-            9,
-            ui.output_plot("map_plot", height="600px"),
-        ),
-        ui.column(
-            3,
+            3,  
             ui.h3("Summary Statistics"),
             ui.output_text_verbatim("summary_stats")
+        ),
+        ui.column(
+            9,  
+            ui.output_plot("map_plot", height="600px"),
         )
     )
 )
 
-# Step 3: Define server logic
 def server(input, output, session):
     @output
     @render.plot
@@ -122,7 +118,7 @@ def server(input, output, session):
                 vmax=500
             )
 
-        # Plot zero events in gray
+        
         if not zero_events.empty:
             zero_events.plot(
                 color='gray',
@@ -157,26 +153,41 @@ def server(input, output, session):
         filtered_data['events_2018'] = filtered_data['events_2018'].fillna(0)
         filtered_data['events_2023'] = filtered_data['events_2023'].fillna(0)
 
-        # Calculate percent change
+        # Calculate percent change for each region
         filtered_data['percent_change'] = (
             (filtered_data['events_2023'] - filtered_data['events_2018']) /
             filtered_data['events_2018'].replace(0, np.nan)
         ) * 100
         filtered_data['percent_change'] = filtered_data['percent_change'].replace([np.inf, -np.inf], np.nan)
-        filtered_data['percent_change'] = filtered_data['percent_change'].fillna(0).clip(lower=-500, upper=500)
+        filtered_data['percent_change'] = filtered_data['percent_change'].fillna(0).clip(lower=-500, upper=700)
 
+        # Calculate overall statistics
         total_events_2018 = filtered_data['events_2018'].sum()
         total_events_2023 = filtered_data['events_2023'].sum()
         avg_percent_change = filtered_data['percent_change'].mean()
 
-        return (
-            f"Total Events in 2018: {total_events_2018:.1f}\n"
-            f"Total Events in 2023: {total_events_2023:.1f}\n"
-            f"Average Percent Change: {avg_percent_change:.2f}%"
+        # Calculate total percent change
+        if total_events_2018 > 0:  # Avoid division by zero
+            total_percent_change = ((total_events_2023 - total_events_2018) / total_events_2018) * 100
+        else:
+            total_percent_change = 0
+
+        # Format and align the text
+        stats_text = (
+            f"Summary Statistics:\n"
+            f"-------------------\n"
+            f"Total Events in 2018   : {total_events_2018:.1f}\n"
+            f"Total Events in 2023   : {total_events_2023:.1f}\n"
+            f"Average Percent Change : {avg_percent_change:.2f}%\n"
+            f"Total Percent Change   : {total_percent_change:.2f}%\n"
         )
+        return stats_text
 
 # Step 4: Launch the app
 app = App(app_ui, server)
 
+
 ### in terminal: 'shiny run app.py'
 ### 'ctrl + c' to close
+
+
