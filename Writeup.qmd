@@ -1,0 +1,65 @@
+---
+title: "Final Project Writeup"
+format: 
+  pdf:
+    keep-tex: true
+    include-in-header: 
+       text: |
+         \usepackage{fvextra}
+         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+include-before-body:
+  text: |
+    \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
+      showspaces = false,
+      showtabs = false,
+      breaksymbolleft={},
+      breaklines
+    }
+---
+
+```{python}
+### SETUP 
+import pandas as pd
+import altair as alt
+import time
+import os
+import warnings
+import geopandas as gpd
+import numpy as np
+import matplotlib.pyplot as plt
+warnings.filterwarnings('ignore')
+import requests
+from bs4 import BeautifulSoup
+import concurrent.futures
+
+### SETTING WD
+os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
+#os.chdir("C:\Users\jmull\Downloads\ACLED_2017-2024-Q1-QTA.csv")  #juan wd
+#os.chdir("/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final")   #will wd
+
+```
+Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
+
+## data links (some datasets are too large, and therefore we hosted it on our google drive)
+
+ORIGINAL UNPROCESSED DATA:
+https://drive.google.com/drive/folders/1Mfv-cvmm9iIgnQ7UKKiMuoTJo0Vjpcv4?usp=sharing
+
+loading the data created from 'final_project_data_clean'
+
+LINK FOR DATA (uploaded in google drive):
+https://drive.google.com/drive/folders/1los_5JwF1rNVOaFtjH1B2Z8thgmBXHxC?usp=drive_link
+
+## excerpt from the readme file about how to read and run our data:
+
+QMD FILES TO LOAD: (in order)
+
+1.final_project_data_clean.qmd -- cleans all the datasets from raw data into usable data that the other qmds load
+
+2.Economic_Analysis.qmd -- data analysis using world bank development indicators, as well as graphing development indicators vs violence from acled dataset. (also containes some code related to shapefiles used in shiny app)
+
+3.EDA_Analysis.qmd -- data anslysis primarily on acled violecnce data and el-salvador specific data. Includes comparisons with wold bank datasets. Also includes natural language modeling, also includes mapping for shiny app
+
+4.Time_Series_Analysis -- graphs of violence in central america and el-salvador
+
+5.app.py -- our shiny app
