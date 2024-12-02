@@ -401,7 +401,7 @@ violence_debt
 
 #### Education 
 ```{python}
-# violence and debt payments
+# violence and education
 violence_edu_df = crime_effects_development.groupby('Year').agg({
     'violence_events': 'sum',
     'Primary education, pupils': 'sum'
