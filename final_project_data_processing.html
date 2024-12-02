@@ -99,7 +99,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<div id="a2b01b1e" class="cell" data-execution_count="1">
+<div id="17270ad6" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">### SETUP </span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> altair <span class="im">as</span> alt</span>
@@ -123,7 +123,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>ORIGINAL UNPROCESSED DATA: https://drive.google.com/drive/folders/1Mfv-cvmm9iIgnQ7UKKiMuoTJo0Vjpcv4?usp=sharing</p>
 <p>loading the data created from ‘final_project_data_clean’</p>
 <p>LINK FOR DATA (uploaded in google drive): https://drive.google.com/drive/folders/1los_5JwF1rNVOaFtjH1B2Z8thgmBXHxC?usp=drive_link</p>
-<div id="f12615e8" class="cell" data-execution_count="2">
+<div id="4c194627" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">### LOAD DATA</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>wbcm_pv <span class="op">=</span> pd.read_csv(<span class="st">'central_america_data_cleaned.csv'</span>) <span class="co"># world bank dataset from kaggle</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>wbdi_CA <span class="op">=</span> pd.read_csv(<span class="st">'world_bank_development_indicators_cleaned.csv'</span>) <span class="co"># world bank dataset from world bank</span></span>
@@ -131,7 +131,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <section id="first-lets-look-at-the-columns-and-how-many-nas-are-in-each-df" class="level2">
 <h2 class="anchored" data-anchor-id="first-lets-look-at-the-columns-and-how-many-nas-are-in-each-df">First, Lets look at the columns and how many NAs are in each df</h2>
-<div id="0aea784e" class="cell" data-execution_count="3">
+<div id="ae66cba4" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbdi_CA.columns)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbdi_CA.isnull().<span class="bu">sum</span>()) <span class="co"># Check for missing values</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -166,7 +166,7 @@ population.1                      8
 dtype: int64</code></pre>
 </div>
 </div>
-<div id="3de35d00" class="cell" data-execution_count="4">
+<div id="4ea8f943" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbcm_pv.columns)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbcm_pv.isnull().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -234,7 +234,7 @@ Total debt service (% of GNI)                                                   
 dtype: int64</code></pre>
 </div>
 </div>
-<div id="2c694acd" class="cell" data-execution_count="5">
+<div id="991bafc5" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acled_CA.columns)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acled_CA.isnull().<span class="bu">sum</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -264,7 +264,7 @@ dtype: int64</code></pre>
 </section>
 <section id="datatype-cleaning-between-datasets" class="level2">
 <h2 class="anchored" data-anchor-id="datatype-cleaning-between-datasets">datatype cleaning between datasets</h2>
-<div id="bb6ce556" class="cell" data-execution_count="6">
+<div id="17690f37" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Rename Columns for merges and such</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>wbdi_CA.rename(columns<span class="op">=</span>{<span class="st">'country'</span>: <span class="st">'Country'</span>, <span class="st">'date'</span>: <span class="st">'Year'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>wbcm_pv.rename(columns<span class="op">=</span>{<span class="st">'Country Name'</span>: <span class="st">'Country'</span>, <span class="st">'Year'</span>: <span class="st">'Year'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
@@ -295,7 +295,7 @@ Name: Year, dtype: int16</code></pre>
 </section>
 <section id="now-lets-do-some-summary-statistics-by-each-country-for-eda-before-we-merge-them" class="level2">
 <h2 class="anchored" data-anchor-id="now-lets-do-some-summary-statistics-by-each-country-for-eda-before-we-merge-them">Now Lets do some summary statistics by each country for EDA, before we merge them</h2>
-<div id="db1b2a60" class="cell" data-execution_count="7">
+<div id="3a8b74ef" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic statistics by country</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>wbdi_summary <span class="op">=</span> wbdi_CA.groupby(<span class="st">'Country'</span>).mean()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbdi_summary)</span>
@@ -386,7 +386,7 @@ dtype: int64</code></pre>
 </section>
 <section id="looking-at-political-stability-overtime" class="level2">
 <h2 class="anchored" data-anchor-id="looking-at-political-stability-overtime">Looking at Political Stability Overtime</h2>
-<div id="3f987027" class="cell" data-execution_count="8">
+<div id="c7fa418d" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Political Stability</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>alt.Chart(wbdi_CA).mark_line().encode(</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
@@ -399,23 +399,23 @@ dtype: int64</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="8">
 
 <style>
-  #altair-viz-348b10e3cbe0497587380c323c87ad51.vega-embed {
+  #altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-348b10e3cbe0497587380c323c87ad51.vega-embed details,
-  #altair-viz-348b10e3cbe0497587380c323c87ad51.vega-embed details summary {
+  #altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf.vega-embed details,
+  #altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-348b10e3cbe0497587380c323c87ad51"></div>
+<div id="altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-348b10e3cbe0497587380c323c87ad51") {
-      outputDiv = document.getElementById("altair-viz-348b10e3cbe0497587380c323c87ad51");
+    if (outputDiv.id !== "altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf") {
+      outputDiv = document.getElementById("altair-viz-4e863b682c5e4d0ca5ba8c19a33d11cf");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -466,7 +466,7 @@ dtype: int64</code></pre>
 </div>
 </div>
 <p>*not including mexico because country too large and diverse and different from other central american countries. Localized ffects of Violence hard to measure in Mexico, and confounding factors too numerous.</p>
-<div id="617d7c51" class="cell" data-execution_count="9">
+<div id="9c5564b0" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Filter out Mexico</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>filtered_data <span class="op">=</span> wbdi_CA[wbdi_CA[<span class="st">'Country'</span>] <span class="op">!=</span> <span class="st">'Mexico'</span>]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -480,23 +480,23 @@ dtype: int64</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="9">
 
 <style>
-  #altair-viz-e1d96169bc794d408fc1fc3c89a06a30.vega-embed {
+  #altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-e1d96169bc794d408fc1fc3c89a06a30.vega-embed details,
-  #altair-viz-e1d96169bc794d408fc1fc3c89a06a30.vega-embed details summary {
+  #altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667.vega-embed details,
+  #altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-e1d96169bc794d408fc1fc3c89a06a30"></div>
+<div id="altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-e1d96169bc794d408fc1fc3c89a06a30") {
-      outputDiv = document.getElementById("altair-viz-e1d96169bc794d408fc1fc3c89a06a30");
+    if (outputDiv.id !== "altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667") {
+      outputDiv = document.getElementById("altair-viz-5caa7eb0e3fb44369b96be4e5d6a9667");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -546,7 +546,7 @@ dtype: int64</code></pre>
 </script>
 </div>
 </div>
-<div id="d3214de3" class="cell" data-execution_count="10">
+<div id="0c6605d9" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Homicide Rates</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>alt.Chart(wbdi_CA).mark_line().encode(</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
@@ -559,23 +559,23 @@ dtype: int64</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="10">
 
 <style>
-  #altair-viz-23f3e1218d014668a58381066d752085.vega-embed {
+  #altair-viz-90e39690cafa4fd9a3484b8aaeae9c44.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-23f3e1218d014668a58381066d752085.vega-embed details,
-  #altair-viz-23f3e1218d014668a58381066d752085.vega-embed details summary {
+  #altair-viz-90e39690cafa4fd9a3484b8aaeae9c44.vega-embed details,
+  #altair-viz-90e39690cafa4fd9a3484b8aaeae9c44.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-23f3e1218d014668a58381066d752085"></div>
+<div id="altair-viz-90e39690cafa4fd9a3484b8aaeae9c44"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-23f3e1218d014668a58381066d752085") {
-      outputDiv = document.getElementById("altair-viz-23f3e1218d014668a58381066d752085");
+    if (outputDiv.id !== "altair-viz-90e39690cafa4fd9a3484b8aaeae9c44") {
+      outputDiv = document.getElementById("altair-viz-90e39690cafa4fd9a3484b8aaeae9c44");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -628,7 +628,7 @@ dtype: int64</code></pre>
 </section>
 <section id="make-a-corr-plot-of-development-indicators" class="level2">
 <h2 class="anchored" data-anchor-id="make-a-corr-plot-of-development-indicators">Make a Corr Plot of development Indicators</h2>
-<div id="ff1caa71" class="cell" data-execution_count="11">
+<div id="a99c3af3" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select a subset of indicators</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>selected_indicators <span class="op">=</span> wbdi_CA[[</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'GDP_current_US'</span>,</span>
@@ -666,23 +666,23 @@ dtype: int64</code></pre>
 <div class="cell-output cell-output-display">
 
 <style>
-  #altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b.vega-embed {
+  #altair-viz-d1ab48334f904f23a30ce94aa3da611b.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b.vega-embed details,
-  #altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b.vega-embed details summary {
+  #altair-viz-d1ab48334f904f23a30ce94aa3da611b.vega-embed details,
+  #altair-viz-d1ab48334f904f23a30ce94aa3da611b.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b"></div>
+<div id="altair-viz-d1ab48334f904f23a30ce94aa3da611b"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b") {
-      outputDiv = document.getElementById("altair-viz-b7dbe5c3780b4bf0a9b3a5069cca818b");
+    if (outputDiv.id !== "altair-viz-d1ab48334f904f23a30ce94aa3da611b") {
+      outputDiv = document.getElementById("altair-viz-d1ab48334f904f23a30ce94aa3da611b");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -732,7 +732,10 @@ dtype: int64</code></pre>
 </script>
 </div>
 </div>
-<div id="eb3c5521" class="cell" data-execution_count="12">
+</section>
+<section id="creating-shapefiles-for-future-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="creating-shapefiles-for-future-analysis">Creating shapefiles for future analysis</h2>
+<div id="9454edd8" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> folium</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> folium.plugins <span class="im">import</span> MarkerCluster</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Point</span>
@@ -745,7 +748,7 @@ dtype: int64</code></pre>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>geometry <span class="op">=</span> [Point(xy) <span class="cf">for</span> xy <span class="kw">in</span> <span class="bu">zip</span>(acled_CA[longitude_column], acled_CA[latitude_column])]</span>
 <span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>acled_gdf <span class="op">=</span> gpd.GeoDataFrame(acled_CA, geometry<span class="op">=</span>geometry, crs<span class="op">=</span><span class="st">'EPSG:4326'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="43ff9d36" class="cell" data-execution_count="13">
+<div id="6742f11e" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#shapefile_path = '/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final/ne_110m_admin_0_countries/ne_110m_admin_0_countries.shp'    # will wd</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>shapefile_path <span class="op">=</span> <span class="st">"d:</span><span class="ch">\\</span><span class="st">UChicago</span><span class="ch">\\</span><span class="st">Classes</span><span class="ch">\\</span><span class="st">2024Qfall</span><span class="ch">\\</span><span class="st">Programming Python</span><span class="ch">\\</span><span class="st">Final-Project</span><span class="ch">\\</span><span class="st">ne_110m_admin_0_countries</span><span class="ch">\\</span><span class="st">ne_110m_admin_0_countries.shp"</span>    <span class="co"># andy wd</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -760,7 +763,7 @@ dtype: int64</code></pre>
 </section>
 <section id="graphing-relationship-between-violent-events-and-gdp" class="level2">
 <h2 class="anchored" data-anchor-id="graphing-relationship-between-violent-events-and-gdp">Graphing relationship between violent events and gdp</h2>
-<div id="4851a580" class="cell" data-execution_count="14">
+<div id="595f94e9" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge ACLED and WBDI(central america)</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>el_salvador_violence <span class="op">=</span> acled_CA[acled_CA[<span class="st">'Country'</span>] <span class="op">==</span> <span class="st">'El Salvador'</span>]</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>el_salvador_gdp <span class="op">=</span> wbdi_CA[wbdi_CA[<span class="st">'Country'</span>] <span class="op">==</span> <span class="st">'El Salvador'</span>]</span>
@@ -785,9 +788,9 @@ dtype: int64</code></pre>
 4  2022             270  3.248872e+10</code></pre>
 </div>
 </div>
-<div id="8a123edb" class="cell" data-execution_count="15">
+<div id="36ad0d94" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Plotting</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>fig, ax1 <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">9</span>, <span class="dv">4</span>))</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>color <span class="op">=</span> <span class="st">'tab:red'</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ax1.set_xlabel(<span class="st">'Year'</span>)</span>
@@ -804,11 +807,12 @@ dtype: int64</code></pre>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Violent Events and Average GDP Over Time'</span>)</span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>fig.tight_layout()</span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>plt.xticks(rotation<span class="op">=</span><span class="dv">45</span>)</span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="final_project_data_processing_files/figure-html/cell-16-output-1.png" width="950" height="566" class="figure-img"></p>
+<p><img src="final_project_data_processing_files/figure-html/cell-16-output-1.png" width="854" height="374" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -816,7 +820,7 @@ dtype: int64</code></pre>
 </section>
 <section id="looking-at-el-salvador-violent-events-and-gdp" class="level2">
 <h2 class="anchored" data-anchor-id="looking-at-el-salvador-violent-events-and-gdp">Looking at El Salvador violent events and gdp</h2>
-<div id="6392874f" class="cell" data-execution_count="16">
+<div id="cec95b07" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbdi_CA[<span class="st">'Year'</span>].head(<span class="dv">10</span>))</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(wbdi_CA[<span class="st">'Year'</span>].dtype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -834,7 +838,7 @@ Name: Year, dtype: int32
 int32</code></pre>
 </div>
 </div>
-<div id="54537d87" class="cell" data-execution_count="17">
+<div id="9cfd9a4d" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Altair plot for Violent Events and Average GDP</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>base <span class="op">=</span> alt.Chart(violence_gdp_time).encode(</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>)  <span class="co"># Treating Year as ordinal for cleaner spacing</span></span>
@@ -857,7 +861,7 @@ int32</code></pre>
 <span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'independent'</span>  <span class="co"># Ensure each Y-axis is independent</span></span>
 <span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>).properties(</span>
 <span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Violent Events and Average GDP in El Salvador Over Time'</span>,</span>
-<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">900</span>,</span>
 <span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span></span>
 <span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="co"># suggest adding a tooltip here to make clear which line is which</span></span>
@@ -866,23 +870,23 @@ int32</code></pre>
 <div class="cell-output cell-output-display" data-execution_count="17">
 
 <style>
-  #altair-viz-62f3326d66b64b1db17a74b303054b95.vega-embed {
+  #altair-viz-69eb67a5651247e38f9822f01d951620.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-62f3326d66b64b1db17a74b303054b95.vega-embed details,
-  #altair-viz-62f3326d66b64b1db17a74b303054b95.vega-embed details summary {
+  #altair-viz-69eb67a5651247e38f9822f01d951620.vega-embed details,
+  #altair-viz-69eb67a5651247e38f9822f01d951620.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-62f3326d66b64b1db17a74b303054b95"></div>
+<div id="altair-viz-69eb67a5651247e38f9822f01d951620"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-62f3326d66b64b1db17a74b303054b95") {
-      outputDiv = document.getElementById("altair-viz-62f3326d66b64b1db17a74b303054b95");
+    if (outputDiv.id !== "altair-viz-69eb67a5651247e38f9822f01d951620") {
+      outputDiv = document.getElementById("altair-viz-69eb67a5651247e38f9822f01d951620");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -928,7 +932,7 @@ int32</code></pre>
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Violent Events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"field": "Violent Events", "title": "Violent Events", "type": "quantitative"}}}, {"mark": {"type": "line", "color": "blue"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Average GDP", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"grid": false}, "field": "Average GDP", "title": "Average GDP (US$)", "type": "quantitative"}}}], "data": {"name": "data-9b15fb4e34182b7ab0d3578187e392f8"}, "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Average GDP in El Salvador Over Time", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-9b15fb4e34182b7ab0d3578187e392f8": [{"Year": 2018, "Violent Events": 741, "Average GDP": 26020850000.0}, {"Year": 2019, "Violent Events": 732, "Average GDP": 26881140000.0}, {"Year": 2020, "Violent Events": 336, "Average GDP": 24930080000.0}, {"Year": 2021, "Violent Events": 401, "Average GDP": 29451240000.0}, {"Year": 2022, "Violent Events": 270, "Average GDP": 32488720000.0}, {"Year": 2023, "Violent Events": 66, "Average GDP": null}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Violent Events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"field": "Violent Events", "title": "Violent Events", "type": "quantitative"}}}, {"mark": {"type": "line", "color": "blue"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Average GDP", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"grid": false}, "field": "Average GDP", "title": "Average GDP (US$)", "type": "quantitative"}}}], "data": {"name": "data-9b15fb4e34182b7ab0d3578187e392f8"}, "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Average GDP in El Salvador Over Time", "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-9b15fb4e34182b7ab0d3578187e392f8": [{"Year": 2018, "Violent Events": 741, "Average GDP": 26020850000.0}, {"Year": 2019, "Violent Events": 732, "Average GDP": 26881140000.0}, {"Year": 2020, "Violent Events": 336, "Average GDP": 24930080000.0}, {"Year": 2021, "Violent Events": 401, "Average GDP": 29451240000.0}, {"Year": 2022, "Violent Events": 270, "Average GDP": 32488720000.0}, {"Year": 2023, "Violent Events": 66, "Average GDP": null}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
@@ -936,7 +940,7 @@ int32</code></pre>
 <section id="further-examining-relationship-between-violent-events-on-other-development-indicators" class="level2">
 <h2 class="anchored" data-anchor-id="further-examining-relationship-between-violent-events-on-other-development-indicators">further examining relationship between violent events on other development indicators</h2>
 <p>*mexico is removed again for reasons mentioned above</p>
-<div id="5dab885c" class="cell" data-execution_count="18">
+<div id="041521b7" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">#### preparing data for merge</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co"># acled data (counts of violence) group by year </span></span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>acled_CA_gp <span class="op">=</span> acled_CA.groupby([<span class="st">'Country'</span>, <span class="st">'Year'</span>]).size().reset_index(name<span class="op">=</span><span class="st">'violence_events'</span>)</span>
@@ -987,7 +991,7 @@ int32</code></pre>
 <h2 class="anchored" data-anchor-id="graphs-of-violence-events-on-economic-and-development-indicators">Graphs of violence events on economic and development indicators</h2>
 <section id="birth-rates" class="level4">
 <h4 class="anchored" data-anchor-id="birth-rates">birth rates</h4>
-<div id="8bbc6ce3" class="cell" data-execution_count="19">
+<div id="d4e0d382" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># violence and birth rates</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>violence_birth_df <span class="op">=</span> crime_effects_development.groupby(<span class="st">'Year'</span>).agg({</span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'violence_events'</span>: <span class="st">'sum'</span>,</span>
@@ -996,45 +1000,45 @@ int32</code></pre>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a><span class="co"># graph</span></span>
 <span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>violence_ch <span class="op">=</span> alt.Chart(violence_birth_df).mark_line(color<span class="op">=</span><span class="st">'red'</span>).encode(</span>
-<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>, axis<span class="op">=</span>alt.Axis(labelAngle<span class="op">=</span><span class="dv">0</span>)),</span>
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'violence_events:Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Violent events (Total)'</span>, labelColor<span class="op">=</span><span class="st">'red'</span>), scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="dv">1500</span>, <span class="dv">2800</span>])),</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    tooltip<span class="op">=</span>[ <span class="st">'Year'</span>, <span class="st">'violence_events'</span>]</span>
-<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Violence Over Time'</span>,width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Violence Over Time'</span>,width<span class="op">=</span><span class="dv">900</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
 <span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>birth_ch <span class="op">=</span> alt.Chart(violence_birth_df).mark_line(color<span class="op">=</span><span class="st">'green'</span>).encode(</span>
-<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>, axis<span class="op">=</span>alt.Axis(labelAngle<span class="op">=</span><span class="dv">0</span>)),</span>
 <span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'Fertility rate, total (births per woman):Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Births Per Woman'</span>, labelColor<span class="op">=</span><span class="st">'green'</span>),scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="fl">1.9</span>, <span class="fl">2.4</span>])),</span>
 <span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    tooltip<span class="op">=</span>[<span class="st">'Year'</span>, <span class="st">'Fertility rate, total (births per woman)'</span>]</span>
-<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Birth Rates Over Time'</span>,width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Birth Rates Over Time'</span>,width<span class="op">=</span><span class="dv">900</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
 <span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>violence_birth <span class="op">=</span> alt.layer(violence_ch, birth_ch).resolve_scale(</span>
 <span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'independent'</span>  <span class="co"># Ensure each Y-axis is independent</span></span>
 <span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>).properties(</span>
 <span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Violent Events and Birth Rates Over Time'</span>,</span>
-<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">900</span>,</span>
 <span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span></span>
 <span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>violence_birth</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
 
 <style>
-  #altair-viz-88a226aff57b4dd5b458689f6de0093f.vega-embed {
+  #altair-viz-f1475246641a4f18890899e095f2fa32.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-88a226aff57b4dd5b458689f6de0093f.vega-embed details,
-  #altair-viz-88a226aff57b4dd5b458689f6de0093f.vega-embed details summary {
+  #altair-viz-f1475246641a4f18890899e095f2fa32.vega-embed details,
+  #altair-viz-f1475246641a4f18890899e095f2fa32.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-88a226aff57b4dd5b458689f6de0093f"></div>
+<div id="altair-viz-f1475246641a4f18890899e095f2fa32"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-88a226aff57b4dd5b458689f6de0093f") {
-      outputDiv = document.getElementById("altair-viz-88a226aff57b4dd5b458689f6de0093f");
+    if (outputDiv.id !== "altair-viz-f1475246641a4f18890899e095f2fa32") {
+      outputDiv = document.getElementById("altair-viz-f1475246641a4f18890899e095f2fa32");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -1080,14 +1084,14 @@ int32</code></pre>
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"mark": {"type": "line", "color": "green"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Fertility rate, total (births per woman)", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "green", "title": "Births Per Woman"}, "field": "Fertility rate, total (births per woman)", "scale": {"domain": [1.9, 2.4]}, "type": "quantitative"}}, "title": "Birth Rates Over Time"}], "data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Birth Rates Over Time", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"mark": {"type": "line", "color": "green"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Fertility rate, total (births per woman)", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "green", "title": "Births Per Woman"}, "field": "Fertility rate, total (births per woman)", "scale": {"domain": [1.9, 2.4]}, "type": "quantitative"}}, "title": "Birth Rates Over Time"}], "data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Birth Rates Over Time", "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
 </section>
 <section id="child-death-rates" class="level4">
 <h4 class="anchored" data-anchor-id="child-death-rates">child death rates</h4>
-<div id="1d144902" class="cell" data-execution_count="20">
+<div id="d3485c83" class="cell" data-execution_count="20">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># violence and child death rates</span></span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>violence_death_df <span class="op">=</span> crime_effects_development.groupby(<span class="st">'Year'</span>).agg({</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'violence_events'</span>: <span class="st">'sum'</span>,</span>
@@ -1096,39 +1100,39 @@ int32</code></pre>
 <span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># graph</span></span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>death_ch <span class="op">=</span> alt.Chart(violence_death_df).mark_line(color<span class="op">=</span><span class="st">'blue'</span>).encode(</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>, axis<span class="op">=</span>alt.Axis(labelAngle<span class="op">=</span><span class="dv">0</span>)),</span>
 <span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'Number of under-five deaths:Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Under 5y/o Deaths (Total)'</span>, labelColor<span class="op">=</span><span class="st">'blue'</span>),scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="dv">16000</span>, <span class="dv">21000</span>])),</span>
 <span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>    tooltip<span class="op">=</span>[<span class="st">'Year'</span>, <span class="st">'Number of under-five deaths'</span>]</span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Under 5 Deaths Over Time'</span>,width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Under 5 Deaths Over Time'</span>,width<span class="op">=</span><span class="dv">900</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>violence_death <span class="op">=</span> alt.layer(violence_ch, death_ch).resolve_scale(</span>
 <span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'independent'</span>  <span class="co"># Ensure each Y-axis is independent</span></span>
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>).properties(</span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Violent Events and Under-5y/o Death Rates Over Time'</span>,</span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">900</span>,</span>
 <span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span></span>
 <span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>violence_death</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
 
 <style>
-  #altair-viz-741a12e5f0a5460f8fda6a329a7709a4.vega-embed {
+  #altair-viz-aec7ac85d0074347a9357c7ceceb71d4.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-741a12e5f0a5460f8fda6a329a7709a4.vega-embed details,
-  #altair-viz-741a12e5f0a5460f8fda6a329a7709a4.vega-embed details summary {
+  #altair-viz-aec7ac85d0074347a9357c7ceceb71d4.vega-embed details,
+  #altair-viz-aec7ac85d0074347a9357c7ceceb71d4.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-741a12e5f0a5460f8fda6a329a7709a4"></div>
+<div id="altair-viz-aec7ac85d0074347a9357c7ceceb71d4"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-741a12e5f0a5460f8fda6a329a7709a4") {
-      outputDiv = document.getElementById("altair-viz-741a12e5f0a5460f8fda6a329a7709a4");
+    if (outputDiv.id !== "altair-viz-aec7ac85d0074347a9357c7ceceb71d4") {
+      outputDiv = document.getElementById("altair-viz-aec7ac85d0074347a9357c7ceceb71d4");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -1174,14 +1178,14 @@ int32</code></pre>
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-9f943eb6e8695ef95884002d07449e34"}, "mark": {"type": "line", "color": "blue"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Number of under-five deaths", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "blue", "title": "Under 5y/o Deaths (Total)"}, "field": "Number of under-five deaths", "scale": {"domain": [16000, 21000]}, "type": "quantitative"}}, "title": "Under 5 Deaths Over Time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Under-5y/o Death Rates Over Time", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-9f943eb6e8695ef95884002d07449e34": [{"Year": 2018, "violence_events": 2149, "Number of under-five deaths": 20190.0}, {"Year": 2019, "violence_events": 2709, "Number of under-five deaths": 19234.0}, {"Year": 2020, "violence_events": 1727, "Number of under-five deaths": 18245.0}, {"Year": 2021, "violence_events": 1690, "Number of under-five deaths": 17347.0}, {"Year": 2022, "violence_events": 1536, "Number of under-five deaths": 16621.0}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-9f943eb6e8695ef95884002d07449e34"}, "mark": {"type": "line", "color": "blue"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Number of under-five deaths", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "blue", "title": "Under 5y/o Deaths (Total)"}, "field": "Number of under-five deaths", "scale": {"domain": [16000, 21000]}, "type": "quantitative"}}, "title": "Under 5 Deaths Over Time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Under-5y/o Death Rates Over Time", "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-9f943eb6e8695ef95884002d07449e34": [{"Year": 2018, "violence_events": 2149, "Number of under-five deaths": 20190.0}, {"Year": 2019, "violence_events": 2709, "Number of under-five deaths": 19234.0}, {"Year": 2020, "violence_events": 1727, "Number of under-five deaths": 18245.0}, {"Year": 2021, "violence_events": 1690, "Number of under-five deaths": 17347.0}, {"Year": 2022, "violence_events": 1536, "Number of under-five deaths": 16621.0}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
 </section>
 <section id="debt-payents" class="level4">
 <h4 class="anchored" data-anchor-id="debt-payents">debt payents</h4>
-<div id="756e81f7" class="cell" data-execution_count="21">
+<div id="1ec16296" class="cell" data-execution_count="21">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># violence and debt payments</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>violence_debt_df <span class="op">=</span> crime_effects_development.groupby(<span class="st">'Year'</span>).agg({</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'violence_events'</span>: <span class="st">'sum'</span>,</span>
@@ -1190,39 +1194,39 @@ int32</code></pre>
 <span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a><span class="co"># graph</span></span>
 <span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>debt_ch <span class="op">=</span> alt.Chart(violence_debt_df).mark_line(color<span class="op">=</span><span class="st">'orange'</span>).encode(</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>, axis<span class="op">=</span>alt.Axis(labelAngle<span class="op">=</span><span class="dv">0</span>)),</span>
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'Total debt service (</span><span class="sc">% o</span><span class="st">f GNI):Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Debt Payments (</span><span class="sc">%G</span><span class="st">NI)'</span>, labelColor<span class="op">=</span><span class="st">'orange'</span>), scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="dv">6</span>, <span class="dv">14</span>])),</span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>    tooltip<span class="op">=</span>[<span class="st">'Year'</span>, <span class="st">'Total debt service (</span><span class="sc">% o</span><span class="st">f GNI)'</span>]</span>
-<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Debt Payments Over Time'</span>,width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Debt Payments Over Time'</span>,width<span class="op">=</span><span class="dv">900</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
 <span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>violence_debt <span class="op">=</span> alt.layer(violence_ch, debt_ch).resolve_scale(</span>
 <span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'independent'</span>  <span class="co"># Ensure each Y-axis is independent</span></span>
 <span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>).properties(</span>
 <span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Violent Events and National Debt Payment Over Time'</span>,</span>
-<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb29-18"><a href="#cb29-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">900</span>,</span>
 <span id="cb29-19"><a href="#cb29-19" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span></span>
 <span id="cb29-20"><a href="#cb29-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb29-21"><a href="#cb29-21" aria-hidden="true" tabindex="-1"></a>violence_debt</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 
 <style>
-  #altair-viz-c32ef2179084481a8b7f1d2475161bca.vega-embed {
+  #altair-viz-28624688343b4704883cf9fbd4fd7701.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-c32ef2179084481a8b7f1d2475161bca.vega-embed details,
-  #altair-viz-c32ef2179084481a8b7f1d2475161bca.vega-embed details summary {
+  #altair-viz-28624688343b4704883cf9fbd4fd7701.vega-embed details,
+  #altair-viz-28624688343b4704883cf9fbd4fd7701.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-c32ef2179084481a8b7f1d2475161bca"></div>
+<div id="altair-viz-28624688343b4704883cf9fbd4fd7701"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-c32ef2179084481a8b7f1d2475161bca") {
-      outputDiv = document.getElementById("altair-viz-c32ef2179084481a8b7f1d2475161bca");
+    if (outputDiv.id !== "altair-viz-28624688343b4704883cf9fbd4fd7701") {
+      outputDiv = document.getElementById("altair-viz-28624688343b4704883cf9fbd4fd7701");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -1268,14 +1272,14 @@ int32</code></pre>
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-b4e1b5a54d85ad9e35db0af99af2eb9e"}, "mark": {"type": "line", "color": "orange"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Total debt service (% of GNI)", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "orange", "title": "Debt Payments (%GNI)"}, "field": "Total debt service (% of GNI)", "scale": {"domain": [6, 14]}, "type": "quantitative"}}, "title": "Debt Payments Over Time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and National Debt Payment Over Time", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-b4e1b5a54d85ad9e35db0af99af2eb9e": [{"Year": 2018, "violence_events": 2149, "Total debt service (% of GNI)": 8.200167533285715}, {"Year": 2019, "violence_events": 2709, "Total debt service (% of GNI)": 8.63076356357143}, {"Year": 2020, "violence_events": 1727, "Total debt service (% of GNI)": 10.013176723428572}, {"Year": 2021, "violence_events": 1690, "Total debt service (% of GNI)": 13.730690685285712}, {"Year": 2022, "violence_events": 1536, "Total debt service (% of GNI)": 8.649396392857144}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-b4e1b5a54d85ad9e35db0af99af2eb9e"}, "mark": {"type": "line", "color": "orange"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Total debt service (% of GNI)", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "orange", "title": "Debt Payments (%GNI)"}, "field": "Total debt service (% of GNI)", "scale": {"domain": [6, 14]}, "type": "quantitative"}}, "title": "Debt Payments Over Time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and National Debt Payment Over Time", "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-b4e1b5a54d85ad9e35db0af99af2eb9e": [{"Year": 2018, "violence_events": 2149, "Total debt service (% of GNI)": 8.200167533285715}, {"Year": 2019, "violence_events": 2709, "Total debt service (% of GNI)": 8.63076356357143}, {"Year": 2020, "violence_events": 1727, "Total debt service (% of GNI)": 10.013176723428572}, {"Year": 2021, "violence_events": 1690, "Total debt service (% of GNI)": 13.730690685285712}, {"Year": 2022, "violence_events": 1536, "Total debt service (% of GNI)": 8.649396392857144}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
 </section>
 <section id="education" class="level4">
 <h4 class="anchored" data-anchor-id="education">Education</h4>
-<div id="fedc7588" class="cell" data-execution_count="22">
+<div id="d7bd22cf" class="cell" data-execution_count="22">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># violence and debt payments</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>violence_edu_df <span class="op">=</span> crime_effects_development.groupby(<span class="st">'Year'</span>).agg({</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">'violence_events'</span>: <span class="st">'sum'</span>,</span>
@@ -1283,40 +1287,40 @@ int32</code></pre>
 <span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>}).reset_index()</span>
 <span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># graph</span></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>edu_ch <span class="op">=</span> alt.Chart(violence_edu_df).mark_line(color<span class="op">=</span><span class="st">'cyan'</span>).encode(</span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>),</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'Primary education, pupils:Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Total number of Students'</span>, labelColor<span class="op">=</span><span class="st">'cyan'</span>), scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="dv">5800000</span>, <span class="dv">6100000</span>])),</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>edu_ch <span class="op">=</span> alt.Chart(violence_edu_df).mark_line(color<span class="op">=</span><span class="st">'teal'</span>).encode(</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>    x<span class="op">=</span>alt.X(<span class="st">'Year:O'</span>, title<span class="op">=</span><span class="st">'Year'</span>, axis<span class="op">=</span>alt.Axis(labelAngle<span class="op">=</span><span class="dv">0</span>)),</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span>alt.Y(<span class="st">'Primary education, pupils:Q'</span>, axis<span class="op">=</span>alt.Axis(title<span class="op">=</span><span class="st">'Total number of Students'</span>, labelColor<span class="op">=</span><span class="st">'teal'</span>), scale<span class="op">=</span>alt.Scale(domain<span class="op">=</span>[<span class="dv">5800000</span>, <span class="dv">6100000</span>])),</span>
 <span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>    tooltip<span class="op">=</span>[<span class="st">'Year'</span>, <span class="st">'Primary education, pupils'</span>]</span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Education over time'</span>,width<span class="op">=</span><span class="dv">600</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>).properties(title<span class="op">=</span><span class="st">'Education over time'</span>,width<span class="op">=</span><span class="dv">900</span>, height<span class="op">=</span><span class="dv">400</span>)</span>
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>violence_edu <span class="op">=</span> alt.layer(violence_ch, edu_ch).resolve_scale(</span>
 <span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="st">'independent'</span>  <span class="co"># Ensure each Y-axis is independent</span></span>
 <span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>).properties(</span>
 <span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>    title<span class="op">=</span><span class="st">'Violent Events and Number of Students over time'</span>,</span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">600</span>,</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>    width<span class="op">=</span><span class="dv">900</span>,</span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>    height<span class="op">=</span><span class="dv">400</span></span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>violence_edu</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="22">
 
 <style>
-  #altair-viz-cae3cbeb1abe40db887fa3f6835b91b6.vega-embed {
+  #altair-viz-5c05801cf4c34a03b99cf94897419bd2.vega-embed {
     width: 100%;
     display: flex;
   }
 
-  #altair-viz-cae3cbeb1abe40db887fa3f6835b91b6.vega-embed details,
-  #altair-viz-cae3cbeb1abe40db887fa3f6835b91b6.vega-embed details summary {
+  #altair-viz-5c05801cf4c34a03b99cf94897419bd2.vega-embed details,
+  #altair-viz-5c05801cf4c34a03b99cf94897419bd2.vega-embed details summary {
     position: relative;
   }
 </style>
-<div id="altair-viz-cae3cbeb1abe40db887fa3f6835b91b6"></div>
+<div id="altair-viz-5c05801cf4c34a03b99cf94897419bd2"></div>
 <script type="text/javascript">
   var VEGA_DEBUG = (typeof VEGA_DEBUG == "undefined") ? {} : VEGA_DEBUG;
   (function(spec, embedOpt){
     let outputDiv = document.currentScript.previousElementSibling;
-    if (outputDiv.id !== "altair-viz-cae3cbeb1abe40db887fa3f6835b91b6") {
-      outputDiv = document.getElementById("altair-viz-cae3cbeb1abe40db887fa3f6835b91b6");
+    if (outputDiv.id !== "altair-viz-5c05801cf4c34a03b99cf94897419bd2") {
+      outputDiv = document.getElementById("altair-viz-5c05801cf4c34a03b99cf94897419bd2");
     }
     const paths = {
       "vega": "https://cdn.jsdelivr.net/npm/vega@5?noext",
@@ -1362,7 +1366,7 @@ int32</code></pre>
         .catch(showError)
         .then(() => displayChart(vegaEmbed));
     }
-  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-18b80f8145884ace678e1c9563e31512"}, "mark": {"type": "line", "color": "cyan"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Primary education, pupils", "type": "quantitative"}], "x": {"field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "cyan", "title": "Total number of Students"}, "field": "Primary education, pupils", "scale": {"domain": [5800000, 6100000]}, "type": "quantitative"}}, "title": "Education over time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Number of Students over time", "width": 600, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-18b80f8145884ace678e1c9563e31512": [{"Year": 2018, "violence_events": 2149, "Primary education, pupils": 6010467.0}, {"Year": 2019, "violence_events": 2709, "Primary education, pupils": 5949296.0}, {"Year": 2020, "violence_events": 1727, "Primary education, pupils": 5900955.0}, {"Year": 2021, "violence_events": 1690, "Primary education, pupils": 5926515.0}, {"Year": 2022, "violence_events": 1536, "Primary education, pupils": 5952608.0}]}}, {"mode": "vega-lite"});
+  })({"config": {"view": {"continuousWidth": 300, "continuousHeight": 300}}, "layer": [{"data": {"name": "data-75eeb1a717a1fdefb8fab11d22bd9b97"}, "mark": {"type": "line", "color": "red"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "violence_events", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "red", "title": "Violent events (Total)"}, "field": "violence_events", "scale": {"domain": [1500, 2800]}, "type": "quantitative"}}, "title": "Violence Over Time"}, {"data": {"name": "data-18b80f8145884ace678e1c9563e31512"}, "mark": {"type": "line", "color": "teal"}, "encoding": {"tooltip": [{"field": "Year", "type": "quantitative"}, {"field": "Primary education, pupils", "type": "quantitative"}], "x": {"axis": {"labelAngle": 0}, "field": "Year", "title": "Year", "type": "ordinal"}, "y": {"axis": {"labelColor": "teal", "title": "Total number of Students"}, "field": "Primary education, pupils", "scale": {"domain": [5800000, 6100000]}, "type": "quantitative"}}, "title": "Education over time"}], "height": 400, "resolve": {"scale": {"y": "independent"}}, "title": "Violent Events and Number of Students over time", "width": 900, "$schema": "https://vega.github.io/schema/vega-lite/v5.8.0.json", "datasets": {"data-75eeb1a717a1fdefb8fab11d22bd9b97": [{"Year": 2018, "violence_events": 2149, "Fertility rate, total (births per woman)": 2.278714285714286}, {"Year": 2019, "violence_events": 2709, "Fertility rate, total (births per woman)": 2.195}, {"Year": 2020, "violence_events": 1727, "Fertility rate, total (births per woman)": 2.134857142857143}, {"Year": 2021, "violence_events": 1690, "Fertility rate, total (births per woman)": 2.107142857142857}, {"Year": 2022, "violence_events": 1536, "Fertility rate, total (births per woman)": 2.0815714285714284}], "data-18b80f8145884ace678e1c9563e31512": [{"Year": 2018, "violence_events": 2149, "Primary education, pupils": 6010467.0}, {"Year": 2019, "violence_events": 2709, "Primary education, pupils": 5949296.0}, {"Year": 2020, "violence_events": 1727, "Primary education, pupils": 5900955.0}, {"Year": 2021, "violence_events": 1690, "Primary education, pupils": 5926515.0}, {"Year": 2022, "violence_events": 1536, "Primary education, pupils": 5952608.0}]}}, {"mode": "vega-lite"});
 </script>
 </div>
 </div>
