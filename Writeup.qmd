@@ -1,65 +1,51 @@
----
-title: "Final Project Writeup"
-format: 
-  pdf:
-    keep-tex: true
-    include-in-header: 
-       text: |
-         \usepackage{fvextra}
-         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
-include-before-body:
-  text: |
-    \RecustomVerbatimEnvironment{verbatim}{Verbatim}{
-      showspaces = false,
-      showtabs = false,
-      breaksymbolleft={},
-      breaklines
-    }
----
 
-```{python}
-### SETUP 
-import pandas as pd
-import altair as alt
-import time
-import os
-import warnings
-import geopandas as gpd
-import numpy as np
-import matplotlib.pyplot as plt
-warnings.filterwarnings('ignore')
-import requests
-from bs4 import BeautifulSoup
-import concurrent.futures
+Andy Fan (Section 2: M/W 10:30-11:50), Git: programming-af
 
-### SETTING WD
-os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') #andy wd
-#os.chdir("C:\Users\jmull\Downloads\ACLED_2017-2024-Q1-QTA.csv")  #juan wd
-#os.chdir("/Users/willsigal/Desktop/UChicago/Fall 2025/Python Final")   #will wd
+Juan Ulloa (Section 2: M/W 10:30-11:50), Git: jmulloa25
 
-```
-Just put your directory in the top line of each chunk when needed, and then make all other wds comments each time you work on yours
+Will Sigal (Section 2: M/W 10:30-11:50), Git: willsigal 
 
-## data links (some datasets are too large, and therefore we hosted it on our google drive)
+### Data Links (includes datasets too large for "Data" folder)
 
 ORIGINAL UNPROCESSED DATA:
+
 https://drive.google.com/drive/folders/1Mfv-cvmm9iIgnQ7UKKiMuoTJo0Vjpcv4?usp=sharing
 
-loading the data created from 'final_project_data_clean'
+CLEANED DATA:
 
-LINK FOR DATA (uploaded in google drive):
 https://drive.google.com/drive/folders/1los_5JwF1rNVOaFtjH1B2Z8thgmBXHxC?usp=drive_link
 
-## excerpt from the readme file about how to read and run our data:
+### Research Question:
+We were interested in how gang violence/armed conflict can impact economic development. Specifically, our research question was how decrease in gang violence can effect the economic development indicators of El-Salvador and by extention Central America.
 
-QMD FILES TO LOAD: (in order)
+We were able to obtain ACLED data that allowed us to identify periods of discontinuity in levels of violence in El-salvador. The "Territorial Control Plan" implemented in 2019 by Nayib Bukele led to a drastic decrease in total violence, gang vaiolence, and violence involving civilians. Which allowed us to make comparisons of economic/development statistics before and after this period by also using World Bank development statstics.
 
-1.final_project_data_clean.qmd -- cleans all the datasets from raw data into usable data that the other qmds load
+### Coding and Approach:
+We utilized 2 ACLED violent events datasets and 2 World Bank Development indicators datasets to do our analysis. Our broad approach was to: 1.perform exploritory analysis on all datasets, identify useful data, trends, and graphs. 2.analyse trends in violence and make sure there is actually substaintial support for a reduction in violence related to policy events. 3.Seek to dissect and better understand the categories, actors, etc. of violence. 4.join ACLED and world bank data, to see how violence impacts development indicators.
 
-2.Economic_Analysis.qmd -- data analysis using world bank development indicators, as well as graphing development indicators vs violence from acled dataset. (also containes some code related to shapefiles used in shiny app)
+### coding descriptions
+1.final_project_data_clean.qmd -- cleans all the datasets (merges, na removes, pivots, remove redundant columns etc.) from raw data into usable data that the other qmds load
 
-3.EDA_Analysis.qmd -- data anslysis primarily on acled violecnce data and el-salvador specific data. Includes comparisons with wold bank datasets. Also includes natural language modeling, also includes mapping for shiny app
+2.Economic_Analysis.qmd -- data analysis using world bank development indicators such as GDP, homicides, graph correlation plots and indicators over time. Also graphing development indicators vs violence by merging World Bank and ACLED datasets, such as graphs of Birth/Death Rates vs #violent events from 2018-2023. (also containes some code related to shapefile cleaning used later in shiny app)
 
-4.Time_Series_Analysis -- graphs of violence in central america and el-salvador
+3.EDA_Analysis.qmd -- data anslysis primarily on acled violecnce data and el-salvador specific data. Includes bar and pie charts that breakdown violent events by types, actors etc. Includes plots related to violence for both Central America and El-Salvador specifically. Includes natural language modeling using package 'gensim' to see how descriptions of events and their prevalence change over time. Also includes mapping for shiny app.
 
-5.app.py -- our shiny app
+4.Time_Series_Analysis -- graphs of violence in central america and el-salvador, including lines of best fit, shaded areas for impactful events etc.
+
+5.app.py -- Our Shiny app: Contains dynamic plot/shapefile that shows changes in indicators over time. Country/Region and indicators all selectable with dropdown menu.
+
+### static plots
+(We produced over a dozen static plots across all code, selected 2 to show as an example):
+
+![Graph of Violence across time in El-Salvador, includes key events and lines of best fit](pictures/Monthly_Attacks_ELsalv_regression.jpg)
+
+![Graph of relation between Central American GDP and total number of violent events](pictures/Violence_GDP.jpg)
+
+### Directions for future work
+We will definetly want to further explore how violence effects more types of economics indicators. There are hundereds of economic indicators provided by the world bank, we simply did not have time to examine most of them. Given more time we would like to explore this further.
+
+We also want to see how different types of violence correlate with these indicators (eg does police violence affect certian indicators a different way than gang violence?)
+
+Our analysis also identified an increase in violence in cournties surrounding El-Salvador whilst El-Salvador's own violence rate decreased. This may be a spillover effect that we would certianly like to investigate more. 
+
+We would also want to add regression analysis to our study, such that we can skee to infer potential causual relations instead of just correlation.
