@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>writeup</title>
+<title>Writeup</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -23,7 +23,7 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="Writeup_files/libs/clipboard/clipboard.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="Writeup_files/libs/clipboard/clipboard.min.js"></script>
 <script src="Writeup_files/libs/quarto-html/quarto.js"></script>
 <script src="Writeup_files/libs/quarto-html/popper.min.js"></script>
 <script src="Writeup_files/libs/quarto-html/tippy.umd.min.js"></script>
@@ -33,6 +33,9 @@ ul.task-list li input[type="checkbox"] {
 <script src="Writeup_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="Writeup_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="Writeup_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
 
 </head>
@@ -43,7 +46,23 @@ ul.task-list li input[type="checkbox"] {
 
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Writeup</h1>
+</div>
 
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
 
 
 <p>Andy Fan (Section 2: M/W 10:30-11:50), Git: programming-af</p>
@@ -67,6 +86,7 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="coding-descriptions" class="level3">
 <h3 class="anchored" data-anchor-id="coding-descriptions">coding descriptions</h3>
+<p>*(All the different qmd’s codes is copied below in this document, after the ‘Directions for Future Work’ section)</p>
 <p>1.final_project_data_clean.qmd – cleans all the datasets (merges, na removes, pivots, remove redundant columns etc.) from raw data into usable data that the other qmds load</p>
 <p>2.Economic_Analysis.qmd – data analysis using world bank development indicators such as GDP, homicides, graph correlation plots and indicators over time. Also graphing development indicators vs violence by merging World Bank and ACLED datasets, such as graphs of Birth/Death Rates vs #violent events from 2018-2023. (also containes some code related to shapefile cleaning used later in shiny app)</p>
 <p>3.EDA_Analysis.qmd – data anslysis primarily on acled violecnce data and el-salvador specific data. Includes bar and pie charts that breakdown violent events by types, actors etc. Includes plots related to violence for both Central America and El-Salvador specifically. Includes natural language modeling using package ‘gensim’ to see how descriptions of events and their prevalence change over time. Also includes mapping for shiny app.</p>
@@ -95,6 +115,11 @@ ul.task-list li input[type="checkbox"] {
 <p>We also want to see how different types of violence correlate with these indicators (eg does police violence affect certian indicators a different way than gang violence?)</p>
 <p>Our analysis also identified an increase in violence in cournties surrounding El-Salvador whilst El-Salvador’s own violence rate decreased. This may be a spillover effect that we would certianly like to investigate more.</p>
 <p>We would also want to add regression analysis to our study, such that we can skee to infer potential causual relations instead of just correlation.</p>
+<section id="code-below-code-chunks-hidden" class="level4">
+<h4 class="anchored" data-anchor-id="code-below-code-chunks-hidden">(code below – code chunks hidden)</h4>
+<p>final_project_data_clean:</p>
+<p>Economic_Analysis</p>
+</section>
 </section>
 
 </main>
