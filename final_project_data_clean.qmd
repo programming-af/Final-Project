@@ -137,7 +137,7 @@ acled_CA = acled[acled["region"] == "Central America"]
 reducing acled columns
 ```{python}
 # Subset by relevant variables
-acled_columns = ['year',"event_id_cnty", "event_date", "event_type", 
+acled_columns = ['year',"event_id_cnty", "event_date", "event_type", 'location',
            "sub_event_type", "actor1", "actor2", 
            "inter1", "inter2", "interaction", 
            "country", "admin1", "latitude", 

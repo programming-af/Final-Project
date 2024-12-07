@@ -163,7 +163,7 @@ acled_CA = acled[acled["region"] == "Central America"]
 
 ```{python}
 # Subset by relevant variables
-acled_columns = ['year',"event_id_cnty", "event_date", "event_type", 
+acled_columns = ['year',"event_id_cnty", "event_date", "event_type", 'location',
            "sub_event_type", "actor1", "actor2", 
            "inter1", "inter2", "interaction", 
            "country", "admin1", "latitude", 
@@ -564,7 +564,7 @@ bar_chart = alt.Chart(aggregated_data).mark_bar().encode(
     width=600,
     height=400
 )
-bar_chart.show()
+bar_chart
 ```
 
 ```{python}
@@ -578,7 +578,7 @@ line_chart = alt.Chart(aggregated_data).mark_line(point=True).encode(
     width=600,
     height=400
 )
-line_chart.show()
+line_chart
 ```
 
 ```{python}
@@ -607,7 +607,7 @@ line_chart = alt.Chart(merged_data).mark_line(point=True).encode(
 )
 
 # Display the chart
-line_chart.show()
+line_chart
 ```
 
 ```{python}
@@ -656,7 +656,7 @@ stacked_bar_chart = alt.Chart(crime_type_data).mark_bar().encode(
 )
 
 # Display the chart
-stacked_bar_chart.show()
+stacked_bar_chart
 ```
 
 ```{python}
@@ -699,7 +699,7 @@ bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
 )
 
 # Display the chart
-bar_chart_crime.show()
+bar_chart_crime
 ```
 
 ```{python}
@@ -716,7 +716,7 @@ bar_chart_crime = alt.Chart(crime_event_type_subtype_data).mark_bar().encode(
 )
 
 # Display the chart
-bar_chart_crime.show()
+bar_chart_crime
 ```
 
 ```{python}
@@ -837,7 +837,7 @@ bar_chart_crime = alt.Chart(yearly_actor_counts).mark_bar().encode(
 )
 
 # Display the chart
-bar_chart_crime.show()
+bar_chart_crime
 ```
 
 ```{python}
@@ -932,7 +932,7 @@ topic_chart = alt.Chart(topics_melted).mark_line(point=True).encode(
     height=400
 )
 
-topic_chart.show()
+topic_chart
 ```
 
 ```{python}
@@ -1196,6 +1196,7 @@ plt.show()
 
 Time_Series_Analysis
 ```{python}
+import statsmodels.api as sm
 # Download data
 os.chdir('d:\\UChicago\\Classes\\2024Qfall\\Programming Python\\Final-Project\\Data') # change wd here
 df_acled = pd.read_csv("acled_project_data_cleaned.csv")
